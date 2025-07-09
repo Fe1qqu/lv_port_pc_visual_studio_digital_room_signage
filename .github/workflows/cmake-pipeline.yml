@@ -30,7 +30,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1
+        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1 \ -DCMAKE_INCLUDE_PATH="../LvglPlatform/LvglWindowsIconResource;../LvglPlatform/lvgl"
 
     - name: Build
       run: |

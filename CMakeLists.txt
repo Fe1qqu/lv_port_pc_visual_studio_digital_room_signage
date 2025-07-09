@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.11)
 project(Digital-Room-Signage)
 add_subdirectory(LvglPlatform/lvgl)
 # Это чисто пофиксить пайплайн, мб оптимальнее сделать можно https://github.com/Fe1qqu/Digital-Room-Signage/actions/runs/16180766316
-include_directories(LvglPlatform/LvglWindowsIconResource)
+# Перелопатил директории, чтоб билд не падал
+include_directories(
+    ${CMAKE_SOURCE_DIR}/LvglPlatform/lvgl
+    ${CMAKE_SOURCE_DIR}/LvglPlatform/LvglWindowsIconResource
+    ${CMAKE_SOURCE_DIR}/LvglPlatform
+)
 add_executable(my_app 
             LvglWindowsSimulator/main.c
             LvglWindowsSimulator/schedule_data.c
@@ -11,4 +16,6 @@ add_executable(my_app
             )
 
 # Связываем LVGL с вашим проектом
-target_link_libraries(my_app PRIVATE lvgl)
+target_include_directories(my_app PRIVATE
+    ${CMAKE_SOURCE_DIR}/LvglPlatform/lvgl
+)
