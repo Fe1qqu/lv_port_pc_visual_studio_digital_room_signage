@@ -1769,6 +1769,10 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClInclude>
     <ClInclude Include="lv_conf.h" />
+    <ClInclude Include="schedule_ui.h" />
+    <ClInclude Include="time_date_display.h" />
+    <ClInclude Include="schedule_data.h" />
+    <ClInclude Include="events.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -4012,7 +4016,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.c">
       <Filter>lvgl\src\widgets\win</Filter>
     </ClCompile>
-    <ClCompile Include="LvglWindowsSimulator.cpp" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="schedule_ui.c" />
+    <ClCompile Include="time_date_display.c" />
+    <ClCompile Include="schedule_data.c" />
+    <ClCompile Include="lv_font_my_montserrat_20.c" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
@@ -14853,5 +14861,6 @@
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\zephyr\module.yml">
       <Filter>lvgl\zephyr</Filter>
     </None>
+    <None Include="freetype.props" />
   </ItemGroup>
 </Project>

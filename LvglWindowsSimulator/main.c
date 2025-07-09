@@ -1,11 +1,22 @@
-﻿#include <iostream>
-#include <Windows.h>
+﻿#include <LvglWindowsIconResource.h>
+#include <lvgl/lvgl.h>
+#include "schedule_ui.h"
+#include "time_date_display.h"
+//#include "events.h"
+#include <time.h>
 
-#include <LvglWindowsIconResource.h>
+static lv_timer_t* minute_timer;
 
-#include "lvgl/lvgl.h"
-#include "lvgl/examples/lv_examples.h"
-#include "lvgl/demos/lv_demos.h"
+static void minute_tick(lv_timer_t* timer)
+{
+    time_t now = time(NULL);
+    struct tm* t = localtime(&now);
+    if (t->tm_sec == 0) // Trigger only when seconds are 0
+    {
+        update_time_date_display();
+        update_schedule_display();
+    }
+}
 
 int main()
 {
@@ -19,6 +30,9 @@ int main()
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 #endif
+
+    // Register custom event code
+    //MINUTE_TICK = lv_event_register_id();
 
     int32_t zoom_level = 100;
     bool allow_dpi_override = false;
@@ -76,14 +90,46 @@ int main()
         return -1;
     }
 
-    //lv_demo_widgets();
-    //lv_demo_benchmark();
+    // Initialize UI components
+    init_time_date_display();
+    init_schedule_ui();
+
+    // Create minute timer (check every second for minute change)
+    minute_timer = lv_timer_create(minute_tick, 1000, NULL);
+
+    // Initial update
+    //lv_event_send(lv_screen_active(), MINUTE_TICK, NULL);
 
     while (1)
     {
         uint32_t time_till_next = lv_timer_handler();
         lv_delay_ms(time_till_next);
+
+        // Check for window close
+        //if (!lv_windows_is_running(display))
+        //{
+        //    break;
+        //}
     }
+
+    // Cleanup
+    //time_display_deinit();
+    //schedule_ui_deinit();
+    //if (minute_timer) {
+    //    lv_timer_del(minute_timer);
+    //    minute_timer = NULL;
+    //}
+    //lv_obj_clean(lv_screen_active());
+    //lv_indev_delete(pointer_indev);
+    //lv_indev_delete(keypad_indev);
+    //lv_indev_delete(encoder_indev);
+    //lv_display_delete(display);
+    //lv_deinit();
+
+    //if (icon_handle)
+    //{
+    //    DestroyIcon(icon_handle);
+    //}
 
     return 0;
 }

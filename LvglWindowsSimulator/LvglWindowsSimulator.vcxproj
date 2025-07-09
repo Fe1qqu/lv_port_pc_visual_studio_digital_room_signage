@@ -628,7 +628,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\tileview\lv_tileview_private.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win_private.h" />
+    <ClInclude Include="events.h" />
     <ClInclude Include="lv_conf.h" />
+    <ClInclude Include="schedule_data.h" />
+    <ClInclude Include="schedule_ui.h" />
+    <ClInclude Include="time_date_display.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3618,7 +3622,11 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <ClCompile Include="LvglWindowsSimulator.cpp" />
+    <ClCompile Include="lv_font_my_montserrat_20.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="schedule_data.c" />
+    <ClCompile Include="schedule_ui.c" />
+    <ClCompile Include="time_date_display.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\freetype\.clang-format" />
