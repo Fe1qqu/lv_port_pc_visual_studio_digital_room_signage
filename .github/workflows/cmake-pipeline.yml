@@ -27,19 +27,19 @@ jobs:
       run: |
         choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
         choco install mingw
-        
+
     - name: Create lv_conf.h
       run: |
-          echo "#ifndef LV_CONF_H" > LvglPlatform/lv_conf.h
-          echo "#define LV_CONF_H" >> LvglPlatform/lv_conf.h
-          echo "#define LV_COLOR_DEPTH 16" >> LvglPlatform/lv_conf.h
-          echo "#endif" >> LvglPlatform/lv_conf.h
+        cp LvglPlatform/lvgl/lv_conf_template.h LvglPlatform/lv_conf.h
+        sed -i 's/#define LV_COLOR_DEPTH 32/#define LV_COLOR_DEPTH 16/' LvglPlatform/lv_conf.h
+        sed -i 's/#define LV_USE_LOG 0/#define LV_USE_LOG 1/' LvglPlatform/lv_conf.h
+        sed -i 's/#define LV_USE_ASSERT_NULL 0/#define LV_USE_ASSERT_NULL 1/' LvglPlatform/lv_conf.h
 
     - name: Configure CMake
       run: |
         mkdir build
         cd build
-        cmake ..
+        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1 -DLV_CONF_PATH=../LvglPlatform/lv_conf.h
 
     - name: Build
       run: |
