@@ -34,6 +34,7 @@ jobs:
         sed -i 's/#define LV_COLOR_DEPTH 32/#define LV_COLOR_DEPTH 16/' LvglPlatform/lv_conf.h
         sed -i 's/#define LV_USE_LOG 0/#define LV_USE_LOG 1/' LvglPlatform/lv_conf.h
         sed -i 's/#define LV_USE_ASSERT_NULL 0/#define LV_USE_ASSERT_NULL 1/' LvglPlatform/lv_conf.h
+        sed -i 's|#include LV_CONF_PATH|#include "../lv_conf.h"|' LvglPlatform/lvgl/src/lv_conf_internal.h
 
     - name: Configure CMake
       run: |
