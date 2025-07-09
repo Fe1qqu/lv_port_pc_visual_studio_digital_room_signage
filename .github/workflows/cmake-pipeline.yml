@@ -4,43 +4,33 @@ on: [push, pull_request]
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        submodules: recursive  
+        submodules: recursive
 
-    - name: Install dependencies (Linux)
-      if: runner.os == 'Linux'
+    - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential libsdl2-dev python3-pip
         pip install pcpp
 
-    - name: Install dependencies (Windows)
-      if: runner.os == 'Windows'
+    - name: Setup LVGL configuration
       run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-        choco install mingw
-
-    - name: Create lv_conf.h
-      run: |
-        cp LvglPlatform/lvgl/lv_conf_template.h LvglPlatform/lv_conf.h
-        sed -i 's/#define LV_COLOR_DEPTH 32/#define LV_COLOR_DEPTH 16/' LvglPlatform/lv_conf.h
-        sed -i 's/#define LV_USE_LOG 0/#define LV_USE_LOG 1/' LvglPlatform/lv_conf.h
-        sed -i 's/#define LV_USE_ASSERT_NULL 0/#define LV_USE_ASSERT_NULL 1/' LvglPlatform/lv_conf.h
+        cp LvglPlatform/lvgl/lv_conf_template.h LvglPlatform/lvgl/lv_conf.h
+        sed -i 's/#define LV_COLOR_DEPTH 32/#define LV_COLOR_DEPTH 16/' LvglPlatform/lvgl/lv_conf.h
+        sed -i 's/#if 0/#if 1/' LvglPlatform/lvgl/lv_conf.h  
+        
         sed -i 's|#include LV_CONF_PATH|#include "../lv_conf.h"|' LvglPlatform/lvgl/src/lv_conf_internal.h
 
     - name: Configure CMake
       run: |
         mkdir build
         cd build
-        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1 
+        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1
 
     - name: Build
       run: |
@@ -50,5 +40,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: my_app-${{ runner.os }}
-        path: build/my_app*  
+        name: my_app
+        path: build/my_app
