@@ -40,7 +40,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1 -DLV_CONF_PATH=../LvglPlatform/lv_conf.h
+        cmake .. -DLV_CONF_INCLUDE_SIMPLE=1 
 
     - name: Build
       run: |
