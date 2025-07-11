@@ -12,6 +12,9 @@ void update_schedule_display(void)
 {
     if (!list_container) return;
 
+    // Save current scroll position
+    lv_coord_t saved_scroll_y = lv_obj_get_scroll_y(list_container);
+
     // Clear existing content
     lv_obj_clean(list_container);
 
@@ -104,8 +107,8 @@ void update_schedule_display(void)
         //}
     }
 
-    // Scroll to current lesson
-    //lv_obj_scroll_to_y(list_container, current_lesson_index * 160, LV_ANIM_ON);
+    // Restore scroll position
+    lv_obj_scroll_to_y(list_container, saved_scroll_y, LV_ANIM_OFF);
 }
 
 static void gesture_event_cb(lv_event_t* e)
