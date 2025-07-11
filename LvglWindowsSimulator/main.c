@@ -2,7 +2,6 @@
 #include <lvgl/lvgl.h>
 #include "schedule_ui.h"
 #include "time_date_display.h"
-//#include "events.h"
 #include <time.h>
 
 static lv_timer_t* minute_timer;
@@ -13,8 +12,8 @@ static void minute_tick(lv_timer_t* timer)
     struct tm* t = localtime(&now);
     if (t->tm_sec == 0) // Trigger only when seconds are 0
     {
-        update_time_date_display();
-        update_schedule_display();
+        update_time_and_date_display();
+        update_progress_bar();
     }
 }
 
@@ -30,9 +29,6 @@ int main()
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 #endif
-
-    // Register custom event code
-    //MINUTE_TICK = lv_event_register_id();
 
     int32_t zoom_level = 100;
     bool allow_dpi_override = false;
@@ -91,14 +87,11 @@ int main()
     }
 
     // Initialize UI components
-    init_time_date_display();
+    init_time_and_date_display();
     init_schedule_ui();
 
     // Create minute timer (check every second for minute change)
     minute_timer = lv_timer_create(minute_tick, 1000, NULL);
-
-    // Initial update
-    //lv_event_send(lv_screen_active(), MINUTE_TICK, NULL);
 
     while (1)
     {

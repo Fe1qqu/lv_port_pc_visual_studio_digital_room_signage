@@ -1,8 +1,6 @@
 ﻿#include "time_date_display.h"
-//#include "events.h"
 #include <lvgl/lvgl.h>
 #include <time.h>
-#include <stdio.h>
 
 static lv_obj_t* time_label;
 static lv_obj_t* date_label;
@@ -17,7 +15,7 @@ static const char* months[] = {
     "июля", "августа", "сентября", "октября", "ноября", "декабря"
 };
 
-void update_time_date_display(void)
+void update_time_and_date_display(void)
 {
     if (!time_label || !date_label) return;
 
@@ -34,7 +32,7 @@ void update_time_date_display(void)
     lv_label_set_text(date_label, date_str);
 }
 
-void init_time_date_display(void)
+void init_time_and_date_display(void)
 {
     // Time label
     time_label = lv_label_create(lv_screen_active());
@@ -44,13 +42,9 @@ void init_time_date_display(void)
 
     // Date label
     date_label = lv_label_create(lv_screen_active());
-    //lv_obj_align(date_label, LV_ALIGN_TOP_LEFT, 10, 40); // Below time label
     lv_obj_align(date_label, LV_ALIGN_TOP_LEFT, 80, 10);
     lv_label_set_text(date_label, "date not initialized");
     lv_obj_set_style_text_font(date_label, &lv_font_my_montserrat_20, 0);
 
-    update_time_date_display();
-
-    // Register event handler for MINUTE_TICK
-    //lv_obj_add_event_cb(time_label, update_time_date, MINUTE_TICK, NULL);
+    update_time_and_date_display();
 }

@@ -23,3 +23,15 @@ int get_lesson_count(void)
 {
     return lesson_count;
 }
+
+int get_lesson_count_for_date(struct tm* date)
+{
+    // Return lesson count for date (e.g., check database or array)
+    return get_lesson_count(); // Fallback
+}
+
+lesson_t get_lesson_for_date(struct tm* date, int index)
+{
+    // Return lesson for date and index
+    return get_lesson(index); // Fallback
+}
