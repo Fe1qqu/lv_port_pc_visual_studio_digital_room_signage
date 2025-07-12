@@ -5,7 +5,6 @@
 #include <time.h>
 
 #define MAX_NUMBER_OF_LESSONS 16
-//const uint8_t MAX_NUMBER_OF_LESSONS = 16;
 
 static lv_obj_t* list_container;
 static lv_obj_t* progress_bars[MAX_NUMBER_OF_LESSONS]; // Store lessons progress bars
@@ -57,18 +56,17 @@ void update_schedule_display(struct tm* display_date)
 
         // Create block container
         lv_obj_t* block = lv_obj_create(list_container);
-        lv_obj_set_size(block, 650, 150); // Block size
-        lv_obj_set_pos(block, 0, i * 160); // Stack vertically with spacing
-        lv_obj_set_style_bg_color(block, lv_color_hex(0xF0F0F0), 0); // Light background
+        lv_obj_set_size(block, 650, LV_SIZE_CONTENT);
+        lv_obj_set_style_bg_color(block, lv_color_hex(0xF0F0F0), 0);
         lv_obj_set_style_border_width(block, 1, 0);
-        lv_obj_set_style_pad_all(block, 10, 0);
+        lv_obj_set_layout(block, LV_LAYOUT_FLEX);
+        lv_obj_set_flex_flow(block, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_flex_align(block, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
         // Progress bar
         lv_obj_t* progress_bar = lv_bar_create(block);
         lv_obj_set_size(progress_bar, 600, 20);
         lv_bar_set_range(progress_bar, 0, 100);
-        lv_obj_align(progress_bar, LV_ALIGN_TOP_MID, 0, 0);
-        //lv_obj_set_style_bg_color(progress_bar, lv_palette_main(LV_PALETTE_BLUE), LV_PART_INDICATOR);
         progress_bars[i] = progress_bar;
 
         // Calculate progress
@@ -102,39 +100,38 @@ void update_schedule_display(struct tm* display_date)
         lv_obj_t* start_time_label = lv_label_create(block);
         snprintf(buffer, sizeof(buffer), "%02d:%02d", lesson.start_hour, lesson.start_minute);
         lv_label_set_text(start_time_label, buffer);
-        lv_obj_align_to(start_time_label, progress_bar, LV_ALIGN_TOP_LEFT, 5, -2);
         lv_obj_set_style_text_font(start_time_label, &lv_font_my_montserrat_20, 0);
+        lv_obj_set_style_text_align(start_time_label, LV_TEXT_ALIGN_LEFT, 0);
+        lv_obj_add_flag(start_time_label, LV_OBJ_FLAG_FLOATING);
+        lv_obj_align_to(start_time_label, progress_bar, LV_ALIGN_LEFT_MID, 5, -1);
 
         // End time label
         lv_obj_t* end_time_label = lv_label_create(block);
         snprintf(buffer, sizeof(buffer), "%02d:%02d", lesson.end_hour, lesson.end_minute);
         lv_label_set_text(end_time_label, buffer);
-        lv_obj_align_to(end_time_label, progress_bar, LV_ALIGN_TOP_RIGHT, -18, -2);
         lv_obj_set_style_text_font(end_time_label, &lv_font_my_montserrat_20, 0);
+        lv_obj_set_style_text_align(end_time_label, LV_TEXT_ALIGN_RIGHT, 0);
+        lv_obj_add_flag(end_time_label, LV_OBJ_FLAG_FLOATING);
+        lv_obj_align_to(end_time_label, progress_bar, LV_ALIGN_RIGHT_MID, -5, -1);
 
         // Type label
         lv_obj_t* type_label = lv_label_create(block);
-        //snprintf(buffer, sizeof(buffer), "%s", lesson.type);
         lv_label_set_text(type_label, lesson.type);
-        lv_obj_align(type_label, LV_ALIGN_TOP_MID, 0, 30);
+        lv_obj_set_width(type_label, 600);
         lv_obj_set_style_text_font(type_label, &lv_font_my_montserrat_20, 0);
-
-        // Subject label (SCROLL)
+        lv_obj_set_style_text_align(type_label, LV_TEXT_ALIGN_CENTER, 0);
+        
+        // Subject label (WRAP)
         lv_obj_t* subject_label = lv_label_create(block);
-        //snprintf(buffer, sizeof(buffer), "%s", lesson.subject);
         lv_label_set_text(subject_label, lesson.subject);
-        lv_label_set_long_mode(subject_label, LV_LABEL_LONG_MODE_SCROLL);
-        lv_obj_set_style_anim_duration(subject_label, 3000, 0);
+        lv_label_set_long_mode(subject_label, LV_LABEL_LONG_WRAP);
         lv_obj_set_width(subject_label, 600);
-        lv_obj_align(subject_label, LV_ALIGN_TOP_MID, 0, 60);
         lv_obj_set_style_text_font(subject_label, &lv_font_my_montserrat_20, 0);
 
         // Teacher label
         lv_obj_t* teacher_label = lv_label_create(block);
-        //snprintf(buffer, sizeof(buffer), "%s", lesson.teacher);
         lv_label_set_text(teacher_label, lesson.teacher);
         lv_obj_set_width(teacher_label, 600);
-        lv_obj_align(teacher_label, LV_ALIGN_TOP_MID, 0, 90);
         lv_obj_set_style_text_font(teacher_label, &lv_font_my_montserrat_20, 0);
     }
 }
@@ -190,6 +187,9 @@ void init_schedule_ui(void)
     lv_obj_set_scrollbar_mode(list_container, LV_SCROLLBAR_MODE_ON);
     lv_obj_set_style_bg_color(list_container, lv_color_hex(0xFFFFFF), 0); // White background
     lv_obj_add_flag(list_container, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_layout(list_container, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(list_container, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_style_pad_gap(list_container, 15, 0);
 
     // Initial update (current date)
     time_t now = time(NULL);
