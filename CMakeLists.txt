@@ -11,15 +11,22 @@ include_directories(${SDL2_INCLUDE_DIRS})
 # Директории с исходниками
 include_directories(${CMAKE_SOURCE_DIR}/LvglWindowsSimulator)
 include_directories(${CMAKE_SOURCE_DIR}/lvgl/src)
+include_directories(${CMAKE_SOURCE_DIR}/lv_drivers)
 
 # Список исходных файлов
 file(GLOB SIMULATOR_SOURCES "${CMAKE_SOURCE_DIR}/LvglWindowsSimulator/*.c")
 file(GLOB LVGL_SOURCES "${CMAKE_SOURCE_DIR}/lvgl/src/*.c")
+file(GLOB LV_DRIVERS_SOURCES 
+    "${CMAKE_SOURCE_DIR}/lv_drivers/sdl/*.c"
+    "${CMAKE_SOURCE_DIR}/lv_drivers/display/*.c"
+    "${CMAKE_SOURCE_DIR}/lv_drivers/indev/*.c"
+)
 
 # Исключение Windows-специфичных файлов
+list(FILTER SIMULATOR_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*lv_windows_.*")
-list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_windows_.*")
+list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 
 # Объединение всех исходных файлов
 set(SOURCES ${SIMULATOR_SOURCES} ${LVGL_SOURCES} ${LV_DRIVERS_SOURCES})
@@ -33,4 +40,5 @@ target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 # Опции компиляции для LVGL
 add_definitions(-DLV_CONF_INCLUDE_SIMPLE)
 add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
-add_definitions(-DLV_USE_WINDOWS=0)
+add_definitions(-DLV_USE_WINDOWS=0) # Отключение Windows-драйверов
+add_definitions(-DSDL_MAIN_HANDLED) # Для SDL2
