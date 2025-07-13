@@ -1,10 +1,22 @@
-﻿#include <LvglWindowsIconResource.h>
-#include <lvgl/lvgl.h>
-#include "schedule_ui.h"
-#include "time_date_display.h"
-#include <time.h>
+﻿#include <unistd.h>
+#define SDL_MAIN_HANDLED        /*To fix SDL's "undefined reference to WinMain" issue*/
+#include <SDL2/SDL.h>
+#include "drivers/sdl/lv_sdl_mouse.h"
+#include "drivers/sdl/lv_sdl_mousewheel.h"
+#include "drivers/sdl/lv_sdl_keyboard.h"
 
-static lv_timer_t* minute_timer;
+static lv_display_t* lvDisplay;
+static lv_indev_t* lvMouse;
+static lv_indev_t* lvMouseWheel;
+static lv_indev_t* lvKeyboard;
+
+#if LV_USE_LOG != 0
+static void lv_log_print_g_cb(lv_log_level_t level, const char* buf)
+{
+    LV_UNUSED(level);
+    LV_UNUSED(buf);
+}
+#endif
 
 static void minute_tick(lv_timer_t* timer)
 {
@@ -19,110 +31,43 @@ static void minute_tick(lv_timer_t* timer)
 
 int main()
 {
+    /* initialize lvgl */
     lv_init();
 
-    /*
-     * Optional workaround for users who wants UTF-8 console output.
-     * If you don't want that behavior can comment them out.
-     */
-#if LV_TXT_ENC == LV_TXT_ENC_UTF8
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
+    // Workaround for sdl2 `-m32` crash
+    // https://bugs.launchpad.net/ubuntu/+source/libsdl2/+bug/1775067/comments/7
+#ifndef WIN32
+    setenv("DBUS_FATAL_WARNINGS", "0", 1);
 #endif
 
-    int32_t zoom_level = 100;
-    bool allow_dpi_override = false;
-    bool simulator_mode = true;
-    lv_display_t* display = lv_windows_create_display(
-        L"LVGL Windows Simulator Display 1",
-        800,
-        480,
-        zoom_level,
-        allow_dpi_override,
-        simulator_mode);
-    if (!display)
-    {
-        return -1;
-    }
+    /* Register the log print callback */
+#if LV_USE_LOG != 0
+    lv_log_register_print_cb(lv_log_print_g_cb);
+#endif
 
-    HWND window_handle = lv_windows_get_display_window_handle(display);
-    if (!window_handle)
-    {
-        return -1;
-    }
+    /* Add a display
+    * Use the 'monitor' driver which creates window on PC's monitor to simulate a display*/
 
-    HICON icon_handle = LoadIconW(
-        GetModuleHandleW(NULL),
-        MAKEINTRESOURCE(IDI_LVGL_WINDOWS));
-    if (icon_handle)
-    {
-        SendMessageW(
-            window_handle,
-            WM_SETICON,
-            TRUE,
-            (LPARAM)icon_handle);
-        SendMessageW(
-            window_handle,
-            WM_SETICON,
-            FALSE,
-            (LPARAM)icon_handle);
-    }
+    lvDisplay = lv_sdl_window_create(800, 480);
+    lvMouse = lv_sdl_mouse_create();
+    lvMouseWheel = lv_sdl_mousewheel_create();
+    lvKeyboard = lv_sdl_keyboard_create();
 
-    lv_indev_t* pointer_indev = lv_windows_acquire_pointer_indev(display);
-    if (!pointer_indev)
-    {
-        return -1;
-    }
-
-    lv_indev_t* keypad_indev = lv_windows_acquire_keypad_indev(display);
-    if (!keypad_indev)
-    {
-        return -1;
-    }
-
-    lv_indev_t* encoder_indev = lv_windows_acquire_encoder_indev(display);
-    if (!encoder_indev)
-    {
-        return -1;
-    }
-
-    // Initialize UI components
+    // Инициализация UI компонентов
     init_time_and_date_display();
     init_schedule_ui();
 
-    // Create minute timer (check every second for minute change)
+    // Создание таймера для обновления времени
     minute_timer = lv_timer_create(minute_tick, 1000, NULL);
 
-    while (1)
-    {
-        uint32_t time_till_next = lv_timer_handler();
-        lv_delay_ms(time_till_next);
-
-        // Check for window close
-        //if (!lv_windows_is_running(display))
-        //{
-        //    break;
-        //}
+    Uint32 lastTick = SDL_GetTicks();
+    while (1) {
+        SDL_Delay(5);
+        Uint32 current = SDL_GetTicks();
+        lv_tick_inc(current - lastTick); // Update the tick timer. Tick is new for LVGL 9
+        lastTick = current;
+        lv_timer_handler(); // Update the UI-
     }
-
-    // Cleanup
-    //time_display_deinit();
-    //schedule_ui_deinit();
-    //if (minute_timer) {
-    //    lv_timer_del(minute_timer);
-    //    minute_timer = NULL;
-    //}
-    //lv_obj_clean(lv_screen_active());
-    //lv_indev_delete(pointer_indev);
-    //lv_indev_delete(keypad_indev);
-    //lv_indev_delete(encoder_indev);
-    //lv_display_delete(display);
-    //lv_deinit();
-
-    //if (icon_handle)
-    //{
-    //    DestroyIcon(icon_handle);
-    //}
 
     return 0;
 }
