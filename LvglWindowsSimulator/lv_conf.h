@@ -1261,7 +1261,9 @@
 #endif
 
 /** LVGL Windows backend */
-#define LV_USE_WINDOWS    1
+#ifndef LV_USE_WINDOWS
+#define LV_USE_WINDOWS 0
+#endif
 
 /** LVGL UEFI backend */
 #define LV_USE_UEFI 0
