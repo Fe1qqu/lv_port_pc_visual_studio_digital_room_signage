@@ -1,9 +1,11 @@
 ﻿#include <unistd.h>
-#define SDL_MAIN_HANDLED        /*To fix SDL's "undefined reference to WinMain" issue*/
 #include <SDL2/SDL.h>
 //#include "drivers/sdl/lv_sdl_mouse.h"
 //#include "drivers/sdl/lv_sdl_mousewheel.h"
 //#include "drivers/sdl/lv_sdl_keyboard.h"
+#include <time.h>
+#include "schedule_ui.h"
+#include "time_date_display.h"
 
 #include "../lvgl/src/drivers/lv_drivers.h"
 
@@ -11,6 +13,7 @@ static lv_display_t* lvDisplay;
 static lv_indev_t* lvMouse;
 static lv_indev_t* lvMouseWheel;
 static lv_indev_t* lvKeyboard;
+static lv_timer_t* minute_timer;
 
 #if LV_USE_LOG != 0
 static void lv_log_print_g_cb(lv_log_level_t level, const char* buf)
