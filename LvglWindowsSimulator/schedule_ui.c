@@ -1,6 +1,6 @@
 ﻿#include "schedule_ui.h"
 #include "schedule_data.h"
-#include <lvgl/lvgl.h>
+#include <../lvgl/lvgl.h>
 #include <stdio.h>
 #include <time.h>
 

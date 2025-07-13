@@ -1,9 +1,11 @@
 ﻿#include <unistd.h>
 #define SDL_MAIN_HANDLED        /*To fix SDL's "undefined reference to WinMain" issue*/
 #include <SDL2/SDL.h>
-#include "drivers/sdl/lv_sdl_mouse.h"
-#include "drivers/sdl/lv_sdl_mousewheel.h"
-#include "drivers/sdl/lv_sdl_keyboard.h"
+//#include "drivers/sdl/lv_sdl_mouse.h"
+//#include "drivers/sdl/lv_sdl_mousewheel.h"
+//#include "drivers/sdl/lv_sdl_keyboard.h"
+
+#include "../lvgl/src/drivers/lv_drivers.h"
 
 static lv_display_t* lvDisplay;
 static lv_indev_t* lvMouse;

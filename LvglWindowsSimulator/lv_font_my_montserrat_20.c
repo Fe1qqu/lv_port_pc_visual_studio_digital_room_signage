@@ -4,7 +4,7 @@
  * Opts: --bpp 1 --size 20 --no-compress --font Montserrat-Medium.ttf --range 32-127,1024-1279 --format lvgl -o lv_font_my_montserrat_20.c
  ******************************************************************************/
 
-#include "../LvglPlatform/lvgl/lvgl.h"
+#include "../lvgl/lvgl.h"
 //#ifdef LV_LVGL_H_INCLUDE_SIMPLE
 //#include "lvgl.h"
 //#else
