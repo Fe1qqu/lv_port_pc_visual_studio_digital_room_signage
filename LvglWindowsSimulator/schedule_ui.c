@@ -63,10 +63,40 @@ void update_schedule_display(struct tm* display_date)
         lv_obj_set_flex_flow(block, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_flex_align(block, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
+        // Progress bar with striped pattern
+        //LV_IMAGE_DECLARE(img_skew_strip);
+        //static lv_style_t style_indic;
+        //lv_style_init(&style_indic);
+        //lv_style_set_bg_image_src(&style_indic, &img_skew_strip);
+        //lv_style_set_bg_image_tiled(&style_indic, true);
+        //lv_style_set_bg_image_opa(&style_indic, LV_OPA_30);
+
+        //static lv_style_t style_main;
+        //lv_style_init(&style_main);
+        //lv_style_set_bg_image_src(&style_main, &img_skew_strip);
+        //lv_style_set_bg_image_tiled(&style_main, true);
+        //lv_style_set_bg_image_opa(&style_main, LV_OPA_50);
+
+        //lv_obj_t* progress_bar = lv_bar_create(block);
+        //lv_obj_add_style(progress_bar, &style_indic, LV_PART_INDICATOR);
+        //lv_obj_add_style(progress_bar, &style_main, LV_PART_MAIN);
+        //lv_obj_set_size(progress_bar, 600, 30);
+        //lv_bar_set_range(progress_bar, 0, 100);
+        //lv_obj_set_style_radius(progress_bar, 0, LV_PART_MAIN);
+        //lv_obj_set_style_radius(progress_bar, 0, LV_PART_INDICATOR);
+        //lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x90EE90), LV_PART_MAIN); // Fallback green
+        //lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x228B22), LV_PART_INDICATOR); // Fallback green
+        ////lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xCCCCCC), 0);
+        //progress_bars[i] = progress_bar;
+
         // Progress bar
         lv_obj_t* progress_bar = lv_bar_create(block);
-        lv_obj_set_size(progress_bar, 600, 20);
+        lv_obj_set_size(progress_bar, 600, 30);
         lv_bar_set_range(progress_bar, 0, 100);
+        lv_obj_set_style_radius(progress_bar, 0, LV_PART_MAIN);
+        lv_obj_set_style_radius(progress_bar, 0, LV_PART_INDICATOR);
+        lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x90EE90), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x228B22), LV_PART_INDICATOR);
         progress_bars[i] = progress_bar;
 
         // Calculate progress
@@ -117,9 +147,14 @@ void update_schedule_display(struct tm* display_date)
         // Type label
         lv_obj_t* type_label = lv_label_create(block);
         lv_label_set_text(type_label, lesson.type);
+        //lv_obj_set_size(type_label, 600, 30);
         lv_obj_set_width(type_label, 600);
         lv_obj_set_style_text_font(type_label, &lv_font_my_montserrat_20, 0);
         lv_obj_set_style_text_align(type_label, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_set_style_bg_color(type_label, lv_color_hex(0xFF0000), 0);
+        lv_obj_set_style_bg_opa(type_label, LV_OPA_COVER, 0);
+        lv_obj_set_style_pad_all(type_label, 5, 0);
+        //lv_obj_set_style_radius(type_label, 4, 0);
         
         // Subject label (WRAP)
         lv_obj_t* subject_label = lv_label_create(block);
@@ -127,6 +162,19 @@ void update_schedule_display(struct tm* display_date)
         lv_label_set_long_mode(subject_label, LV_LABEL_LONG_WRAP);
         lv_obj_set_width(subject_label, 600);
         lv_obj_set_style_text_font(subject_label, &lv_font_my_montserrat_20, 0);
+        lv_obj_set_style_pad_top(subject_label, 5, 0);
+        lv_obj_set_style_pad_bottom(subject_label, 10, 0);
+
+        // Dashed line
+        static lv_point_t line_points[] = { {0, 0}, {600, 0} };
+        lv_obj_t* line = lv_line_create(block);
+        lv_line_set_points(line, line_points, 2);
+        lv_obj_set_style_line_color(line, lv_color_hex(0x000000), 0);
+        lv_obj_set_style_line_width(line, 1, 0);
+        lv_obj_set_style_line_dash_width(line, 2, 0);
+        lv_obj_set_style_line_dash_gap(line, 2, 0);
+        lv_obj_set_width(line, 600);
+        //lv_obj_center(line);
 
         // Teacher label
         lv_obj_t* teacher_label = lv_label_create(block);
