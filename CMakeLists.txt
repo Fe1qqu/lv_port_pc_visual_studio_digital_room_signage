@@ -8,20 +8,21 @@ set(CMAKE_C_STANDARD 11)
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Добавление директорий с исходниками
+# Директории с исходниками
 include_directories(${CMAKE_SOURCE_DIR}/LvglWindowsSimulator)
 include_directories(${CMAKE_SOURCE_DIR}/lvgl/src)
 include_directories(${CMAKE_SOURCE_DIR}/lv_drivers)
 
 # Список исходных файлов
-file(GLOB_RECURSIVE SOURCES
-    ${CMAKE_SOURCE_DIR}/LvglWindowsSimulator/*.c
-    ${CMAKE_SOURCE_DIR}/lvgl/src/*.c
-    ${CMAKE_SOURCE_DIR}/lv_drivers/*.c
-)
+file(GLOB SIMULATOR_SOURCES "${CMAKE_SOURCE_DIR}/LvglWindowsSimulator/*.c")
+file(GLOB LVGL_SOURCES "${CMAKE_SOURCE_DIR}/lvgl/src/*.c")
+file(GLOB LV_DRIVERS_SOURCES "${CMAKE_SOURCE_DIR}/lv_drivers/*.c" "${CMAKE_SOURCE_DIR}/lv_drivers/sdl/*.c")
 
 # Исключение Windows-специфичных файлов
-list(FILTER SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
+list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
+
+# Объединение всех исходных файлов
+set(SOURCES ${SIMULATOR_SOURCES} ${LVGL_SOURCES} ${LV_DRIVERS_SOURCES})
 
 # Создание исполняемого файла
 add_executable(${PROJECT_NAME} ${SOURCES})
