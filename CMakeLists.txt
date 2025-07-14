@@ -22,11 +22,13 @@ file(GLOB LV_DRIVERS_SOURCES
     "${CMAKE_SOURCE_DIR}/lv_drivers/indev/*.c"
 )
 
-# Исключение Windows-специфичных файлов
+# Исключение Windows- и OS-специфичных файлов
 list(FILTER SIMULATOR_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*windows/.*")
 list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*lv_windows_.*")
-list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*osal/.*") # Исключение osal
+list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*osal/.*")
+list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*lv_os.c$")
+list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*lv_windows.c$")
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*windows/.*")
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_windows_.*")
@@ -44,4 +46,5 @@ target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 add_definitions(-DLV_CONF_INCLUDE_SIMPLE)
 add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
 add_definitions(-DLV_USE_WINDOWS=0)
+add_definitions(-DLV_USE_OS=LV_OS_NONE)
 add_definitions(-DSDL_MAIN_HANDLED)
