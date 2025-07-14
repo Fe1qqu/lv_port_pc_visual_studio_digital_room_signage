@@ -838,7 +838,7 @@
 #endif
 
 /** API for CreateFile, ReadFile, etc. */
-#define LV_USE_FS_WIN32 1
+#define LV_USE_FS_WIN32 0
 #if LV_USE_FS_WIN32
     #define LV_FS_WIN32_LETTER 'C'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
     #define LV_FS_WIN32_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
