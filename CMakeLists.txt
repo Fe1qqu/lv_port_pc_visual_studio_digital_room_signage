@@ -55,3 +55,6 @@ add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
 add_definitions(-DLV_USE_WINDOWS=0)
 add_definitions(-DLV_USE_OS=LV_OS_NONE)
 add_definitions(-DSDL_MAIN_HANDLED)
+
+# Убедимся, что lv_global.c включён
+set_source_files_properties(${CMAKE_SOURCE_DIR}/lvgl/src/core/lv_global.c PROPERTIES COMPILE_FLAGS "-DLV_CONF_INCLUDE_SIMPLE")
