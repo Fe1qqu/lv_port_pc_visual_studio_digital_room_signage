@@ -14863,4 +14863,7 @@
     </None>
     <None Include="freetype.props" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
 </Project>

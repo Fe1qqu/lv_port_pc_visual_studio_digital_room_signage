@@ -1,6 +1,7 @@
 ﻿#include "time_date_display.h"
 #include <../lvgl/lvgl.h>
 #include <time.h>
+#include <stdio.h>
 
 static lv_obj_t* time_label;
 static lv_obj_t* date_label;

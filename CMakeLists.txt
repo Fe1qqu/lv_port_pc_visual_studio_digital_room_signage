@@ -26,6 +26,7 @@ file(GLOB LV_DRIVERS_SOURCES
 list(FILTER SIMULATOR_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*windows/.*")
 list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*lv_windows_.*")
+list(FILTER LVGL_SOURCES EXCLUDE REGEX ".*osal/.*") # Исключение osal
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*windows/.*")
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_win32drv.c$")
 list(FILTER LV_DRIVERS_SOURCES EXCLUDE REGEX ".*lv_windows_.*")
@@ -42,5 +43,5 @@ target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 # Опции компиляции для LVGL
 add_definitions(-DLV_CONF_INCLUDE_SIMPLE)
 add_definitions(-DLV_LVGL_H_INCLUDE_SIMPLE)
-add_definitions(-DLV_USE_WINDOWS=0) # Отключение Windows-драйверов
-add_definitions(-DSDL_MAIN_HANDLED) # Для SDL2
+add_definitions(-DLV_USE_WINDOWS=0)
+add_definitions(-DSDL_MAIN_HANDLED)
