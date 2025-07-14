@@ -9,7 +9,6 @@
 
 #include <../lvgl/lvgl.h>
 #include "../lvgl/src/drivers/lv_drivers.h"
-#include <../lvgl/src/drivers/sdl/sdl.h>
 
 static lv_display_t* lvDisplay;
 static lv_indev_t* lvMouse;
