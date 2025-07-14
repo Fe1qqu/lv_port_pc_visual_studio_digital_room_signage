@@ -8,7 +8,9 @@
 #include "time_date_display.h"
 
 #include <../lvgl/lvgl.h>
-#include "../lvgl/src/drivers/lv_drivers.h"
+#include "../lvgl/src/drivers/sdl/lv_sdl_mouse.h"
+#include "../lvgl/src/drivers/sdl/lv_sdl_mousewheel.h"
+#include "../lvgl/src/drivers/sdl/lv_sdl_keyboard.h"
 
 static lv_display_t* lvDisplay;
 static lv_indev_t* lvMouse;
