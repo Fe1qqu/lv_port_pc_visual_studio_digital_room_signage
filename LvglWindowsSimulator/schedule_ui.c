@@ -6,6 +6,26 @@
 
 #define MAX_NUMBER_OF_LESSONS 16
 
+typedef struct {
+    const char* type;
+    uint32_t color;
+} TypeColor;
+
+// Dictionary of lesson types and their background colors
+static const TypeColor type_colors[] = {
+    {"Зачет", 0xe91e63},
+    {"Экзамен", 0xe91e63},
+    {"Дифференцированный зачет", 0xe91e63},
+    {"Консультация к промежуточной аттестации", 0x9e5fa1},
+    {"-", 0x407ab2},
+    {"Курсовая работа", 0x407ab2},
+    {"Лекции", 0x276093},
+    {"Практические занятия и семинары", 0xff8f00},
+    {"Лабораторные занятия", 0x3e8470},
+    {NULL, 0xCCCCCC}
+};
+#define TYPE_COLOR_COUNT (sizeof(type_colors) / sizeof(TypeColor) - 1)
+
 static lv_obj_t* list_container;
 static lv_obj_t* progress_bars[MAX_NUMBER_OF_LESSONS]; // Store lessons progress bars
 static struct tm current_display_date;
@@ -56,9 +76,11 @@ void update_schedule_display(struct tm* display_date)
 
         // Create block container
         lv_obj_t* block = lv_obj_create(list_container);
-        lv_obj_set_size(block, 650, LV_SIZE_CONTENT);
-        lv_obj_set_style_bg_color(block, lv_color_hex(0xF0F0F0), 0);
+        lv_obj_set_size(block, 630, LV_SIZE_CONTENT);
+        //lv_obj_set_style_bg_color(block, lv_color_hex(0xF0F0F0), 0);
         lv_obj_set_style_border_width(block, 1, 0);
+        lv_obj_set_style_border_color(block, lv_color_hex(0x525252), 0);
+        lv_obj_set_style_radius(block, 0, 0);
         lv_obj_set_layout(block, LV_LAYOUT_FLEX);
         lv_obj_set_flex_flow(block, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_flex_align(block, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -131,6 +153,8 @@ void update_schedule_display(struct tm* display_date)
         snprintf(buffer, sizeof(buffer), "%02d:%02d", lesson.start_hour, lesson.start_minute);
         lv_label_set_text(start_time_label, buffer);
         lv_obj_set_style_text_font(start_time_label, &lv_font_my_montserrat_20, 0);
+        //lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x2fb255), 0);
+        lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x000000), 0);
         lv_obj_set_style_text_align(start_time_label, LV_TEXT_ALIGN_LEFT, 0);
         lv_obj_add_flag(start_time_label, LV_OBJ_FLAG_FLOATING);
         lv_obj_align_to(start_time_label, progress_bar, LV_ALIGN_LEFT_MID, 5, -1);
@@ -140,6 +164,8 @@ void update_schedule_display(struct tm* display_date)
         snprintf(buffer, sizeof(buffer), "%02d:%02d", lesson.end_hour, lesson.end_minute);
         lv_label_set_text(end_time_label, buffer);
         lv_obj_set_style_text_font(end_time_label, &lv_font_my_montserrat_20, 0);
+        //lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x2fb255), 0);
+        lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x000000), 0);
         lv_obj_set_style_text_align(end_time_label, LV_TEXT_ALIGN_RIGHT, 0);
         lv_obj_add_flag(end_time_label, LV_OBJ_FLAG_FLOATING);
         lv_obj_align_to(end_time_label, progress_bar, LV_ALIGN_RIGHT_MID, -5, -1);
@@ -150,11 +176,22 @@ void update_schedule_display(struct tm* display_date)
         //lv_obj_set_size(type_label, 600, 30);
         lv_obj_set_width(type_label, 600);
         lv_obj_set_style_text_font(type_label, &lv_font_my_montserrat_20, 0);
+        lv_obj_set_style_text_color(type_label, lv_color_hex(0xffffff), 0);
         lv_obj_set_style_text_align(type_label, LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_style_bg_color(type_label, lv_color_hex(0xFF0000), 0);
         lv_obj_set_style_bg_opa(type_label, LV_OPA_COVER, 0);
         lv_obj_set_style_pad_all(type_label, 5, 0);
         //lv_obj_set_style_radius(type_label, 4, 0);
+        
+        uint32_t bg_color = 0xCCCCCC; // Default color
+        for (int j = 0; j < TYPE_COLOR_COUNT; j++)
+        {
+            if (strcmp(lesson.type, type_colors[j].type) == 0)
+            {
+                bg_color = type_colors[j].color;
+                break;
+            }
+        }
+        lv_obj_set_style_bg_color(type_label, lv_color_hex(bg_color), 0);
         
         // Subject label (WRAP)
         lv_obj_t* subject_label = lv_label_create(block);
@@ -162,6 +199,8 @@ void update_schedule_display(struct tm* display_date)
         lv_label_set_long_mode(subject_label, LV_LABEL_LONG_WRAP);
         lv_obj_set_width(subject_label, 600);
         lv_obj_set_style_text_font(subject_label, &lv_font_my_montserrat_20, 0);
+        //lv_obj_set_style_text_color(subject_label, lv_color_hex(0x525252), 0);
+        lv_obj_set_style_text_color(subject_label, lv_color_hex(0x000000), 0);
         lv_obj_set_style_pad_top(subject_label, 5, 0);
         lv_obj_set_style_pad_bottom(subject_label, 10, 0);
 
@@ -181,6 +220,7 @@ void update_schedule_display(struct tm* display_date)
         lv_label_set_text(teacher_label, lesson.teacher);
         lv_obj_set_width(teacher_label, 600);
         lv_obj_set_style_text_font(teacher_label, &lv_font_my_montserrat_20, 0);
+        lv_obj_set_style_text_color(teacher_label, lv_color_hex(0x000000), 0);
     }
 }
 
@@ -229,11 +269,12 @@ void init_schedule_ui(void)
 {
     // Create main container
     list_container = lv_obj_create(lv_screen_active());
-    lv_obj_set_size(list_container, 700, 400);
+    lv_obj_set_size(list_container, 670, 400);
     lv_obj_center(list_container);
     lv_obj_set_scroll_dir(list_container, LV_DIR_VER); // Vertical scrolling only
     lv_obj_set_scrollbar_mode(list_container, LV_SCROLLBAR_MODE_ON);
     lv_obj_set_style_bg_color(list_container, lv_color_hex(0xFFFFFF), 0); // White background
+    lv_obj_set_style_radius(list_container, 0, 0);
     lv_obj_add_flag(list_container, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_layout(list_container, LV_LAYOUT_FLEX);
     lv_obj_set_flex_flow(list_container, LV_FLEX_FLOW_COLUMN);
