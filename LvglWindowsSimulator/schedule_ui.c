@@ -206,7 +206,7 @@ void update_schedule_display(struct tm* display_date)
         lv_obj_set_style_pad_bottom(subject_label, 10, 0);
 
         // Dashed line
-        static lv_point_t line_points[] = { {0, 0}, {600, 0} };
+        static lv_point_precise_t line_points[] = { {0, 0}, {600, 0} };
         lv_obj_t* line = lv_line_create(block);
         lv_line_set_points(line, line_points, 2);
         lv_obj_set_style_line_color(line, lv_color_hex(0x000000), 0);
