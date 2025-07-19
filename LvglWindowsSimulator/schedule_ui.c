@@ -25,7 +25,7 @@ static const TypeColor type_colors[] = {
     {"Лабораторные занятия", 0x3e8470},
     {NULL, 0xCCCCCC}
 };
-#define TYPE_COLOR_COUNT (sizeof(type_colors) / sizeof(TypeColor) - 1)
+#define TYPE_COLOR_COUNT ((int)sizeof(type_colors) / sizeof(TypeColor) - 1)
 
 static lv_obj_t* list_container;
 static lv_obj_t* progress_bars[MAX_NUMBER_OF_LESSONS]; // Store lessons progress bars
