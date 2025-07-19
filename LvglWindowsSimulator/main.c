@@ -8,6 +8,8 @@ static lv_timer_t* minute_timer;
 
 static void minute_tick(lv_timer_t* timer)
 {
+    (void)timer;
+
     time_t now = time(NULL);
     struct tm* t = localtime(&now);
     if (t->tm_sec == 0) // Trigger only when seconds are 0
