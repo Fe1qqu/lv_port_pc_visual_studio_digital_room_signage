@@ -448,21 +448,21 @@ void init_schedule_ui(void)
     // Create header with arrows
     lv_obj_t* header = lv_calendar_header_arrow_create(calendar);
 
-// Style for the left arrow (child 0)
-lv_obj_t* left_arrow = lv_obj_get_child(header, 0);
-lv_obj_set_style_bg_opa(left_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-lv_obj_set_style_bg_opa(left_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_PRESSED));
-lv_obj_set_style_border_width(left_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-lv_obj_set_style_shadow_width(left_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-lv_obj_set_style_text_color(left_arrow, lv_color_hex(0x000000), (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT)); // Arrow color
+    // Style for the left arrow (child 0)
+    lv_obj_t* left_arrow = lv_obj_get_child(header, 0);
+    lv_obj_set_style_bg_opa(left_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
+    lv_obj_set_style_bg_opa(left_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_PRESSED));
+    lv_obj_set_style_border_width(left_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
+    lv_obj_set_style_shadow_width(left_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
+    lv_obj_set_style_text_color(left_arrow, lv_color_hex(0x000000), (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT)); // Arrow color
 
-// Style for the right arrow (child 2)
-lv_obj_t* right_arrow = lv_obj_get_child(header, 2);
-lv_obj_set_style_bg_opa(right_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-lv_obj_set_style_bg_opa(right_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_PRESSED));
-lv_obj_set_style_border_width(right_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-lv_obj_set_style_shadow_width(right_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-lv_obj_set_style_text_color(right_arrow, lv_color_hex(0x000000), (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT)); // Arrow color
+    // Style for the right arrow (child 2)
+    lv_obj_t* right_arrow = lv_obj_get_child(header, 2);
+    lv_obj_set_style_bg_opa(right_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
+    lv_obj_set_style_bg_opa(right_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_PRESSED));
+    lv_obj_set_style_border_width(right_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
+    lv_obj_set_style_shadow_width(right_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
+    lv_obj_set_style_text_color(right_arrow, lv_color_hex(0x000000), (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT)); // Arrow color
 
     lv_obj_add_event_cb(calendar, calendar_event_cb, LV_EVENT_ALL, NULL);
 
