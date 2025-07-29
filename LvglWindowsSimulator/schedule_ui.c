@@ -71,12 +71,16 @@ static void show_popup(const char* message)
 
 static void close_calendar_cb(lv_event_t* e)
 {
+    (void)e;
+
     lv_obj_add_flag(calendar_container, LV_OBJ_FLAG_HIDDEN);
     lv_calendar_set_month_shown(calendar, current_display_date.tm_year + 1900, current_display_date.tm_mon + 1);
 }
 
 static void date_container_cb(lv_event_t* e)
 {
+    (void)e;
+
     lv_obj_remove_flag(calendar_container, LV_OBJ_FLAG_HIDDEN);
 }
 
