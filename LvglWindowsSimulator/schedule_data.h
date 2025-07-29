@@ -1,6 +1,8 @@
 ﻿#ifndef SCHEDULE_DATA_H
 #define SCHEDULE_DATA_H
 
+#include <stdint.h>
+
 struct tm;
 
 /**
@@ -8,14 +10,22 @@ struct tm;
  * Contains information about the lesson type, subject, teacher, and time.
  */
 typedef struct {
-    const char* type;       /** Type of the lesson */
-    const char* subject;    /** Subject of the lesson */
-    const char* teacher;    /** Name of the teacher */
-    int start_hour;         /** Start hour of the lesson */
-    int start_minute;       /** Start minute of the lesson */
-    int end_hour;           /** End hour of the lesson */
-    int end_minute;         /** End minute of the lesson */
+    char* type;       /* Type of the lesson */
+    char* subject;    /* Subject of the lesson */
+    char* teacher;    /* Name of the teacher */
+    char* groups;     /* Groups of the lesson */
+    uint32_t color;         /* Background color for the lesson type */
+    int start_hour;         /* Start hour of the lesson */
+    int start_minute;       /* Start minute of the lesson */
+    int end_hour;           /* End hour of the lesson */
+    int end_minute;         /* End minute of the lesson */
 } lesson_t;
+
+/**
+ * Sets the room ID for fetching schedule data.
+ * @param room_id Pointer to a string containing the room ID.
+ */
+void set_room_id(const char* room_id);
 
 /**
  * Retrieves a lesson by its index for the current date.

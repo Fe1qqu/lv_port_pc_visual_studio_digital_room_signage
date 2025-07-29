@@ -1,23 +1,22 @@
 ﻿#include "schedule_data.h"
+#include "api.h"
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
-static lesson_t lessons[] = {
-    {"Лабораторные занятия", "Искусственные интеллект и нейронные сети", "Сурина Альфия Адгамовна", 9, 45, 11, 20},
-    {"Практические занятия и семинары", "Теория оптимизации", "Кунгурцева Алла Васильевна", 11, 30, 13, 05},
-    {"Лекции", "Компьютерная графика", "Алексеева Елена Юрьевна", 13, 35, 15, 10},
-    {"Лекции", "Основы компьютерного зрения", "Сурин Владимир Анатольевич", 15, 20, 16, 55},
-    {"Лекции", "111111111121111111111211111111111111111111121Основы компьютерного зрения", "Сурин Владимир Анатольевич", 17, 05, 18, 40 }
-};
+static lesson_t* lessons = NULL;
+static int lesson_count = 0;
+static struct tm last_fetched_date = { 0 };
+static char* current_room_id = NULL;
 
-static int lesson_count = sizeof(lessons) / sizeof(lessons[0]);
-
-lesson_t get_lesson(int index)
+void set_room_id(const char* room_id)
 {
-    if (index >= 0 && index < lesson_count)
+    if (current_room_id)
     {
-        return lessons[index];
+        free(current_room_id);
     }
-    return lessons[0]; // Fallback to first lesson
+
+    current_room_id = strdup(room_id);
 }
 
 int get_lesson_count(void)
@@ -25,18 +24,55 @@ int get_lesson_count(void)
     return lesson_count;
 }
 
+lesson_t get_lesson(int index)
+{
+    if (index >= 0 && index < lesson_count)
+    {
+        return lessons[index];
+    }
+
+    static lesson_t empty = { 0 };
+    return empty;
+}
+
 int get_lesson_count_for_date(struct tm* date)
 {
-    (void)date;
+    if (!current_room_id || !date) return 0;
 
-    // Return lesson count for date (e.g., check database or array)
-    return get_lesson_count(); // Fallback
+    // Checking if the data needs to be updated
+    if (date->tm_year != last_fetched_date.tm_year ||
+        date->tm_mon != last_fetched_date.tm_mon ||
+        date->tm_mday != last_fetched_date.tm_mday)
+    {
+        // Free previously allocated lessons
+        for (int i = 0; i < lesson_count; i++)
+        {
+            free((char*)lessons[i].subject);
+            free((char*)lessons[i].teacher);
+            free((char*)lessons[i].type);
+            free((char*)lessons[i].groups);
+        }
+        free(lessons);
+        lessons = NULL;
+        lesson_count = 0;
+
+        if (fetch_schedule_data(current_room_id, date, &lessons, &lesson_count) != 0)
+        {
+            return 0;
+        }
+        last_fetched_date = *date;
+    }
+    return lesson_count;
 }
 
 lesson_t get_lesson_for_date(struct tm* date, int index)
 {
-    (void)date;
+    int count = get_lesson_count_for_date(date);
+    if (count <= 0 || index < 0 || index >= count)
+    {
+        static lesson_t empty = { 0 };
+        return empty;
+    }
 
-    // Return lesson for date and index
-    return get_lesson(index); // Fallback
+    return get_lesson(index);
 }

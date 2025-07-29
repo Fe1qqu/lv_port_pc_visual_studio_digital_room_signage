@@ -2,6 +2,9 @@
 #include <lvgl/lvgl.h>
 #include "schedule_ui.h"
 #include "time_date_display.h"
+#include "schedule_data.h"
+#include "config.h"
+#include <stdio.h>
 #include <time.h>
 
 static lv_timer_t* minute_timer;
@@ -22,6 +25,15 @@ static void minute_tick(lv_timer_t* timer)
 int main()
 {
     lv_init();
+
+    char* room_id = read_room_id_from_config("config.json");
+    if (!room_id)
+    {
+        fprintf(stderr, "Failed to read roomId from config\n");
+        return -1;
+    }
+    set_room_id(room_id);
+    free(room_id);
 
     /*
      * Optional workaround for users who wants UTF-8 console output.

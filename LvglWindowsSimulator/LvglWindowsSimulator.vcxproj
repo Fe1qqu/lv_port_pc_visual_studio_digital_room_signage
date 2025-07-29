@@ -628,7 +628,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\tileview\lv_tileview_private.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win_private.h" />
+    <ClInclude Include="api.h" />
+    <ClInclude Include="cJSON.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="events.h" />
+    <ClInclude Include="locale.h" />
     <ClInclude Include="lv_conf.h" />
     <ClInclude Include="schedule_data.h" />
     <ClInclude Include="schedule_ui.h" />
@@ -3622,6 +3626,10 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="api.c" />
+    <ClCompile Include="calendar_icon_light.c" />
+    <ClCompile Include="cJSON.c" />
+    <ClCompile Include="config.c" />
     <ClCompile Include="lv_font_my_montserrat_20.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="schedule_data.c" />
@@ -6791,6 +6799,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\xmls\lv_textarea.xml" />
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\zephyr\Kconfig" />
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\zephyr\module.yml" />
+    <None Include="config.json" />
     <None Include="freetype.props" />
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1622" Project="Mile.Project.Cpp.targets" />
