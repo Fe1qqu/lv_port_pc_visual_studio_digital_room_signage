@@ -51,12 +51,11 @@ int fetch_schedule_data(const char* room_id, const struct tm* date, lesson_t** l
         return -1;
     }
 
-    // Формируем URL
     char url[256];
     snprintf(url, sizeof(url), "https://mapapi.susu.ru/integration/map/Schedule/roomId/%s/date/%02d.%02d.%04d",
         room_id, date->tm_mday, date->tm_mon + 1, date->tm_year + 1900);
 
-    printf("Fetching URL: %s\n", url);
+    //printf("Fetching URL: %s\n", url);
 
     char* response = malloc(1);
     if (!response)
