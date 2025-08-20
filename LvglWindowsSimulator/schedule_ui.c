@@ -372,7 +372,7 @@ static void toggle_theme_cb(lv_event_t* event)
         is_dark_theme ? &theme_icon_dark : &theme_icon_light, NULL);
 }
 
-static clear_chedule_content()
+static void clear_chedule_content()
 {
     // Move tabview and date_container to lv_screen_active before clearing
     //lv_obj_set_parent(tabview, lv_screen_active());
@@ -390,7 +390,7 @@ static clear_chedule_content()
     lv_obj_set_parent(date_container, list_container);
 }
 
-static highlight_calendar_date(struct tm* display_date)
+static void highlight_calendar_date(struct tm* display_date)
 {
     // Highlight the selected calendar date
     highlighted_date.year = display_date->tm_year + 1900;
