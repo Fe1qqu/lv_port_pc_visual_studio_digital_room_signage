@@ -10,10 +10,10 @@ struct tm;
  * Contains information about the lesson type, subject, teacher, and time.
  */
 typedef struct {
-    char* type;       /* Type of the lesson */
-    char* subject;    /* Subject of the lesson */
-    char* teacher;    /* Name of the teacher */
-    char* groups;     /* Groups of the lesson */
+    char* type;             /* Type of the lesson */
+    char* subject;          /* Subject of the lesson */
+    char* teacher;          /* Name of the teacher */
+    char* groups;           /* Groups of the lesson */
     uint32_t color;         /* Background color for the lesson type */
     int start_hour;         /* Start hour of the lesson */
     int start_minute;       /* Start minute of the lesson */

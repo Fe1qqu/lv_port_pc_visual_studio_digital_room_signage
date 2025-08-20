@@ -3627,13 +3627,17 @@
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <ClCompile Include="api.c" />
+    <ClCompile Include="calendar_icon_dark.c" />
     <ClCompile Include="calendar_icon_light.c" />
     <ClCompile Include="cJSON.c" />
     <ClCompile Include="config.c" />
+    <ClCompile Include="lv_font_my_montserrat_14.c" />
     <ClCompile Include="lv_font_my_montserrat_20.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="schedule_data.c" />
     <ClCompile Include="schedule_ui.c" />
+    <ClCompile Include="theme_icon_dark.c" />
+    <ClCompile Include="theme_icon_light.c" />
     <ClCompile Include="time_date_display.c" />
   </ItemGroup>
   <ItemGroup>

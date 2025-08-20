@@ -28,15 +28,17 @@ void init_time_and_date_display(void)
 {
     // Time label
     time_label = lv_label_create(lv_screen_active());
-    lv_obj_align(time_label, LV_ALIGN_TOP_LEFT, 10, 10);
-    lv_label_set_text(time_label, "time not initialized");
+    lv_obj_align(time_label, LV_ALIGN_TOP_LEFT, 10, 13);
+    lv_label_set_text(time_label, "--:--");
     lv_obj_set_style_text_font(time_label, &lv_font_my_montserrat_20, 0);
+    lv_obj_set_style_text_color(time_label, lv_color_hex(0xFFFFFF), 0);
 
     // Date label
     date_label = lv_label_create(lv_screen_active());
-    lv_obj_align(date_label, LV_ALIGN_TOP_LEFT, 80, 10);
-    lv_label_set_text(date_label, "date not initialized");
+    lv_obj_align_to(date_label, time_label, LV_ALIGN_TOP_RIGHT, 55, 0);
+    lv_label_set_text(date_label, "time and date not initialized");
     lv_obj_set_style_text_font(date_label, &lv_font_my_montserrat_20, 0);
+    lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), 0);
 
     update_time_and_date_display();
 }

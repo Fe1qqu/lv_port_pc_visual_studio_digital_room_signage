@@ -49,8 +49,8 @@ int main()
     bool simulator_mode = true;
     lv_display_t* display = lv_windows_create_display(
         L"LVGL Windows Simulator Display 1",
-        800,
         480,
+        800,
         zoom_level,
         allow_dpi_override,
         simulator_mode);

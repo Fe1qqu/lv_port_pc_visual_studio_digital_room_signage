@@ -186,8 +186,8 @@ int fetch_schedule_data(const char* room_id, const struct tm* date, lesson_t** l
         lesson->end_minute = end_minute;
 
         lesson->subject = strdup(subject->valuestring);
-        lesson->teacher = strdup(teacher->valuestring);
-        lesson->groups = strdup(groups->valuestring);
+        lesson->teacher = strdup(teacher_empty ? "-" : teacher->valuestring);
+        lesson->groups = strdup(groups_empty ? "-" : groups->valuestring);
 
         // Check for memory allocation failure
         if (!lesson->subject || !lesson->teacher || !lesson->groups)
