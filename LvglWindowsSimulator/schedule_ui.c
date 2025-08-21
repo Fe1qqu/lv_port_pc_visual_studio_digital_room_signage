@@ -7,8 +7,7 @@
 #include <time.h>
 #include <string.h>
 
-LV_IMG_DECLARE(calendar_icon_light)
-LV_IMG_DECLARE(calendar_icon_dark)
+LV_IMG_DECLARE(calendar_icon)
 LV_IMG_DECLARE(theme_icon_light)
 LV_IMG_DECLARE(theme_icon_dark)
 
@@ -28,10 +27,9 @@ static lv_obj_t* calendar_close_button;
 static lv_obj_t* calendar_container;
 static lv_obj_t* calendar_background;
 static lv_style_t day_style; // Style for calendar day buttons
-static lv_obj_t* date_container;
 static lv_obj_t* date_label;
-static lv_obj_t* calendar_icon;
-//static lv_obj_t* tabview;
+static lv_obj_t* calendar_image;
+static lv_obj_t* clickable_container; // Container for clickable area to open calendar
 static lv_calendar_date_t highlighted_date; // Store the highlighted date
 
 static lv_obj_t* popup;
@@ -178,7 +176,7 @@ static void close_calendar_cb(lv_event_t* event)
     update_calendar_arrow_state(calendar);
 }
 
-static void date_container_cb(lv_event_t* event)
+static void calendar_container_cb(lv_event_t* event)
 {
     (void)event;
 
@@ -216,108 +214,6 @@ static void calendar_event_cb(lv_event_t* event)
     }
 }
 
-//static void tab_changed_cb(lv_event_t* event)
-//{
-//    printf("работает\n");
-//    printf("%d\n", lv_tabview_get_tab_active(tabview));
-//    
-//    lv_event_code_t code = lv_event_get_code(event);
-//    if (code == LV_EVENT_VALUE_CHANGED)
-//    {
-//        printf("123\n");
-//    }
-//
-//    //lv_obj_t* tabview = lv_event_get_target(e);
-//    //uint16_t tab_id = lv_tabview_get_tab_active(tabview);
-//    //lv_obj_t* tab_content = lv_tabview_get_content(tabview);
-//    //lv_obj_t* selected_tab = lv_obj_get_child(tab_content, tab_id);
-//
-//    //time_t date_timestamp = (time_t)lv_obj_get_user_data(selected_tab);
-//    //struct tm* temp = localtime(&date_timestamp);
-//    //if (temp)
-//    //{
-//    //    printf("321\n");
-//
-//    //    struct tm selected_date = *temp;
-//    //    update_schedule_display(&selected_date);
-//    //}
-//}
-
-//static void create_tabs_with_lessons(lv_obj_t* tabview, struct tm* reference_date)
-//{
-//    time_t start_time = mktime(&start_academic_date);
-//    time_t end_time = mktime(&end_academic_date);
-//
-//    struct tm current_date;
-//    memcpy(&current_date, &start_academic_date, sizeof(struct tm));
-//
-//    //lv_obj_clean(tabview);
-//
-//    uint16_t today_tab_id = 0;
-//    uint16_t tab_index = 0;
-//
-//    for (int i = 0; i < 20; i++)
-//    {
-//        lv_tabview_add_tab(tabview, "123");
-//    }
-//
-//    //while (mktime(&current_date) <= end_time)
-//    //{
-//    //    int lesson_count = get_lesson_count_for_date(&current_date);
-//    //    if (lesson_count > 0)
-//    //    {
-//    //        char tab_name[16];
-//    //        snprintf(tab_name, sizeof(tab_name), "%d %s", current_date.tm_mday, abbreviated_months[current_date.tm_mon]);
-//
-//    //        printf("Creating tab: %s\n", tab_name);
-//
-//    //        lv_obj_t* tab = lv_tabview_add_tab(tabview, tab_name);
-//    //        //lv_obj_set_user_data(tab, mktime(&current_date));
-//    //    }
-//
-//    //    current_date.tm_mday += 1;
-//    //    mktime(&current_date);
-//    //}
-//
-//    //lv_tabview_set_active(tabview, today_tab_id, LV_ANIM_OFF);
-//
-//    //return;
-//
-//
-//
-//
-//
-//    //while (mktime(&current_date) <= end_time)
-//    //{
-//    //    int lesson_count = get_lesson_count_for_date(&current_date);
-//    //    if (lesson_count > 0)
-//    //    {
-//    //        char tab_name[16];
-//    //        snprintf(tab_name, sizeof(tab_name), "%d %s", current_date.tm_mday, abbreviated_months[current_date.tm_mon]);
-//
-//    //        printf("Creating tab: %s\n", tab_name);
-//
-//    //        lv_obj_t* tab = lv_tabview_add_tab(tabview, tab_name);
-//    //        lv_obj_set_user_data(tab, mktime(&current_date));
-//
-//    //        if (reference_date &&
-//    //            current_date.tm_year == reference_date->tm_year &&
-//    //            current_date.tm_mon == reference_date->tm_mon &&
-//    //            current_date.tm_mday == reference_date->tm_mday)
-//    //        {
-//    //            today_tab_id = tab_index;
-//    //        }
-//
-//    //        tab_index++;
-//    //    }
-//
-//    //    current_date.tm_mday += 1;
-//    //    mktime(&current_date);
-//    //}
-//
-//    //lv_tabview_set_active(tabview, today_tab_id, LV_ANIM_OFF);
-//}
-
 static void toggle_theme_cb(lv_event_t* event)
 {
     (void)event;
@@ -345,9 +241,8 @@ static void toggle_theme_cb(lv_event_t* event)
         }
     }
 
-    // Update date_container
+    // Update date_label
     lv_obj_set_style_text_color(date_label, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x2C72A5), 0);
-    lv_image_set_src(calendar_icon, is_dark_theme ? &calendar_icon_dark : &calendar_icon_light);
 
     // Update calendar
     lv_obj_set_style_bg_color(calendar, is_dark_theme ? lv_color_hex(0x303336) : lv_color_hex(0xFFFFFF), 0);
@@ -355,14 +250,6 @@ static void toggle_theme_cb(lv_event_t* event)
 
     // Update calendar header arrows
     update_calendar_arrow_state(calendar);
-
-    // Update calendar day buttons background color
-    //lv_obj_t* btnmatrix = lv_calendar_get_btnmatrix(calendar);
-    //if (btnmatrix)
-    //{
-    //    lv_style_set_bg_color(&day_style, is_dark_theme ? lv_color_hex(0x272727) : lv_color_hex(0x407AB2));
-    //    lv_obj_invalidate(btnmatrix);
-    //}
 
     // Update calendar close button
     lv_obj_set_style_bg_color(calendar_close_button, is_dark_theme ? lv_color_hex(0x272727) : lv_color_hex(0x407AB2), 0);
@@ -374,9 +261,8 @@ static void toggle_theme_cb(lv_event_t* event)
 
 static void clear_chedule_content()
 {
-    // Move tabview and date_container to lv_screen_active before clearing
-    //lv_obj_set_parent(tabview, lv_screen_active());
-    lv_obj_set_parent(date_container, lv_screen_active());
+    // Move and date_label to lv_screen_active before clearing
+    lv_obj_set_parent(date_label, lv_screen_active());
 
     // Clear existing content
     lv_obj_clean(list_container);
@@ -385,9 +271,8 @@ static void clear_chedule_content()
         blocks[i] = NULL;
     }
 
-    // Return tabview and date_container to list_container
-    //lv_obj_set_parent(tabview, list_container);
-    lv_obj_set_parent(date_container, list_container);
+    // Return and date_label to list_container
+    lv_obj_set_parent(date_label, list_container);
 }
 
 static void highlight_calendar_date(struct tm* display_date)
@@ -682,11 +567,27 @@ void init_schedule_ui(void)
     theme_toggle_button = lv_imagebutton_create(lv_screen_active());
     lv_imagebutton_set_src(theme_toggle_button, LV_IMAGEBUTTON_STATE_RELEASED, &theme_icon_light, &theme_icon_light, NULL);
     lv_obj_set_size(theme_toggle_button, 32, 32);
-    lv_obj_align(theme_toggle_button, LV_ALIGN_TOP_RIGHT, -10, 10);
-    //lv_obj_set_style_bg_opa(theme_toggle_button, LV_OPA_TRANSP, 0);
-    //lv_obj_set_style_bg_color(theme_toggle_button,lv_color_hex(0x000000), 0);
-    //lv_obj_set_style_radius(theme_toggle_button, 5, 0);
+    lv_obj_align(theme_toggle_button, LV_ALIGN_TOP_RIGHT, -10, 8);
     lv_obj_add_event_cb(theme_toggle_button, toggle_theme_cb, LV_EVENT_CLICKED, NULL);
+
+    // Calendar image
+    calendar_image = lv_image_create(lv_screen_active());
+    lv_image_set_src(calendar_image, &calendar_icon);
+    lv_obj_align_to(calendar_image, theme_toggle_button, LV_ALIGN_OUT_LEFT_MID, -10, 0);
+    lv_obj_add_flag(calendar_image, LV_OBJ_FLAG_CLICKABLE);
+    //lv_obj_add_event_cb(calendar_image, calendar_container_cb, LV_EVENT_CLICKED, NULL);
+    
+    // Create clickable container over time, date, and calendar icon
+    clickable_container = lv_obj_create(lv_screen_active());
+    lv_obj_set_size(clickable_container, 435, 48);
+    lv_obj_align(clickable_container, LV_ALIGN_TOP_LEFT, 0, 0);
+    lv_obj_set_style_bg_opa(clickable_container, LV_OPA_TRANSP, 0); // Transparent background
+    lv_obj_set_style_border_width(clickable_container, 0, 0);
+    lv_obj_add_flag(clickable_container, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_remove_flag(clickable_container, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scroll_dir(clickable_container, LV_DIR_NONE);
+    lv_obj_set_scrollbar_mode(clickable_container, LV_SCROLLBAR_MODE_OFF);
+    lv_obj_add_event_cb(clickable_container, calendar_container_cb, LV_EVENT_CLICKED, NULL);
 
     // Create list container
     list_container = lv_obj_create(lv_screen_active());
@@ -703,48 +604,12 @@ void init_schedule_ui(void)
     lv_obj_set_flex_align(list_container, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_gap(list_container, 15, 0);
 
-    // Create tabview
-    //tabview = lv_tabview_create(list_container);
-    //lv_obj_set_size(tabview, lv_pct(100), 50);
-
-    //lv_obj_set_scroll_dir(tabview, LV_DIR_HOR);
-    //lv_obj_set_scrollbar_mode(tabview, LV_SCROLLBAR_MODE_ON);
-    //static lv_style_t tab_btn_style;
-    //lv_style_init(&tab_btn_style);
-    //lv_style_set_width(&tab_btn_style, 100); // Fixed width of 100px for each tab
-    //lv_obj_add_style(lv_tabview_get_tab_btns(tabview), &tab_btn_style, LV_PART_ITEMS);
-
-    //lv_obj_add_flag(tabview, LV_OBJ_FLAG_SCROLLABLE);
-    //lv_obj_set_scroll_dir(tabview, LV_DIR_HOR);
-    //lv_obj_set_scrollbar_mode(tabview, LV_SCROLLBAR_MODE_ON);
-    //lv_obj_set_style_bg_color(tabview, lv_color_hex(0xE0E0E0), 0);
-    //lv_obj_set_style_pad_all(tabview, 5, 0);
-
-    // Date container
-    date_container = lv_obj_create(list_container);
-    lv_obj_set_size(date_container, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_opa(date_container, LV_OPA_0, 0);
-    lv_obj_set_style_border_width(date_container, 0, 0);
-    lv_obj_set_layout(date_container, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(date_container, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(date_container, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_add_flag(date_container, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(date_container, date_container_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_remove_flag(date_container, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_scroll_dir(date_container, LV_DIR_NONE);
-    lv_obj_set_scrollbar_mode(date_container, LV_SCROLLBAR_MODE_OFF);
-
     // Calendar date
-    date_label = lv_label_create(date_container);
+    date_label = lv_label_create(list_container);
     lv_label_set_text(date_label, "На сегодня занятий нет");
     lv_obj_set_style_text_font(date_label, &lv_font_my_montserrat_20, 0);
     lv_obj_set_style_text_color(date_label, lv_color_hex(0x2C72A5), 0);
-
-    // Calendar icon
-    calendar_icon = lv_image_create(date_container);
-    lv_image_set_src(calendar_icon, &calendar_icon_light);
-    lv_obj_set_style_pad_left(calendar_icon, 5, 0);
-    lv_obj_set_style_translate_y(calendar_icon, -2, 0);
+    lv_obj_set_style_pad_all(date_label, 5, 0);
 
     // Сalendar container
     calendar_container = lv_obj_create(lv_screen_active());
@@ -842,22 +707,6 @@ void init_schedule_ui(void)
     //end_academic_date.tm_mon = 10; // DEBUG
     end_academic_date.tm_mday = 31;
     mktime(&end_academic_date);
-
-    // Create tabs with dates
-    //create_tabs_with_lessons(tabview, current_date);
-    //lv_obj_add_event_cb(lv_tabview_get_tab_bar(tabview), tab_changed_cb, LV_EVENT_VALUE_CHANGED | LV_EVENT_PREPROCESS, tabview);
-
-    //lv_obj_add_event_cb(tabview, tab_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
-
-    //lv_obj_t* tv = lv_tabview_create(lv_screen_active());
-    //lv_obj_set_size(tv, lv_pct(100), 50);
-
-    //lv_obj_t* tab1 = lv_tabview_add_tab(tv, "Tab 1");
-    //lv_obj_t* tab2 = lv_tabview_add_tab(tv, "Tab 2");
-    //lv_obj_t* tab3 = lv_tabview_add_tab(tv, "Tab 3");
-
-    //lv_obj_add_event_cb(tabview, tab_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
-    //lv_obj_add_event_cb(lv_tabview_get_tab_bar(tv), tab_changed_cb, LV_EVENT_VALUE_CHANGED, tv);
 
     lv_timer_create(inactivity_check_cb, 1000, NULL);
 

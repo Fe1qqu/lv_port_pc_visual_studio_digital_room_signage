@@ -35,7 +35,7 @@ void init_time_and_date_display(void)
 
     // Date label
     date_label = lv_label_create(lv_screen_active());
-    lv_obj_align_to(date_label, time_label, LV_ALIGN_TOP_RIGHT, 55, 0);
+    lv_obj_align_to(date_label, time_label, LV_ALIGN_TOP_RIGHT, 50, 0);
     lv_label_set_text(date_label, "time and date not initialized");
     lv_obj_set_style_text_font(date_label, &lv_font_my_montserrat_20, 0);
     lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), 0);

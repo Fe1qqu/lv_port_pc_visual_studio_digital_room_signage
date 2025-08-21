@@ -3627,8 +3627,7 @@
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <ClCompile Include="api.c" />
-    <ClCompile Include="calendar_icon_dark.c" />
-    <ClCompile Include="calendar_icon_light.c" />
+    <ClCompile Include="calendar_icon.c" />
     <ClCompile Include="cJSON.c" />
     <ClCompile Include="config.c" />
     <ClCompile Include="lv_font_my_montserrat_14.c" />
