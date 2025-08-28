@@ -608,8 +608,7 @@
  *  #define LV_FONT_CUSTOM_DECLARE   LV_FONT_DECLARE(my_font_1) LV_FONT_DECLARE(my_font_2)
  *  @endcode
  */
-#define LV_FONT_CUSTOM_DECLARE   LV_FONT_DECLARE(lv_font_my_montserrat_20)
-
+#define LV_FONT_CUSTOM_DECLARE LV_FONT_DECLARE(lv_font_my_montserrat_20) LV_FONT_DECLARE(lv_font_my_montserrat_14)
 
 /** Always set a default font */
 #define LV_FONT_DEFAULT &lv_font_montserrat_14
@@ -697,14 +696,14 @@
 
 #define LV_USE_CALENDAR   1
 #if LV_USE_CALENDAR
-    #define LV_CALENDAR_WEEK_STARTS_MONDAY 0
+    #define LV_CALENDAR_WEEK_STARTS_MONDAY 1
     #if LV_CALENDAR_WEEK_STARTS_MONDAY
-        #define LV_CALENDAR_DEFAULT_DAY_NAMES {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"}
+        #define LV_CALENDAR_DEFAULT_DAY_NAMES {"ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"}
     #else
-        #define LV_CALENDAR_DEFAULT_DAY_NAMES {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"}
+        #define LV_CALENDAR_DEFAULT_DAY_NAMES {"ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"}
     #endif
 
-    #define LV_CALENDAR_DEFAULT_MONTH_NAMES {"January", "February", "March",  "April", "May",  "June", "July", "August", "September", "October", "November", "December"}
+    #define LV_CALENDAR_DEFAULT_MONTH_NAMES {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"}
     #define LV_USE_CALENDAR_HEADER_ARROW 1
     #define LV_USE_CALENDAR_HEADER_DROPDOWN 1
     #define LV_USE_CALENDAR_CHINESE 0

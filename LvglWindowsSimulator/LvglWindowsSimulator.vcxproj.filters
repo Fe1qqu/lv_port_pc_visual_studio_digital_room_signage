@@ -1773,6 +1773,10 @@
     <ClInclude Include="time_date_display.h" />
     <ClInclude Include="schedule_data.h" />
     <ClInclude Include="events.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="api.h" />
+    <ClInclude Include="cJSON.h" />
+    <ClInclude Include="locale.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -4021,6 +4025,13 @@
     <ClCompile Include="time_date_display.c" />
     <ClCompile Include="schedule_data.c" />
     <ClCompile Include="lv_font_my_montserrat_20.c" />
+    <ClCompile Include="config.c" />
+    <ClCompile Include="api.c" />
+    <ClCompile Include="cJSON.c" />
+    <ClCompile Include="theme_icon_dark.c" />
+    <ClCompile Include="theme_icon_light.c" />
+    <ClCompile Include="calendar_icon.c" />
+    <ClCompile Include="lv_font_my_montserrat_14.c" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
@@ -14862,5 +14873,6 @@
       <Filter>lvgl\zephyr</Filter>
     </None>
     <None Include="freetype.props" />
+    <None Include="config.json" />
   </ItemGroup>
 </Project>
