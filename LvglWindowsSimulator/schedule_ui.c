@@ -90,7 +90,7 @@ static void show_popup(const char* message)
     lv_obj_remove_flag(popup, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_scroll_dir(popup, LV_DIR_NONE);
     lv_obj_set_scrollbar_mode(popup, LV_SCROLLBAR_MODE_OFF);
-     
+
     lv_obj_t* label = lv_label_create(popup);
     lv_label_set_text(label, message);
     lv_obj_set_style_text_font(label, &lv_font_my_montserrat_20, 0);
@@ -238,6 +238,42 @@ static void toggle_theme_cb(lv_event_t* event)
             lv_obj_set_style_line_color(lv_obj_get_child(blocks[i], 5), is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x000000), 0); // Dashed line
             lv_obj_set_style_text_color(lv_obj_get_child(lv_obj_get_child(blocks[i], 6), 0), is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x000000), 0); // Teacher label
             lv_obj_set_style_text_color(lv_obj_get_child(lv_obj_get_child(blocks[i], 6), 1), is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x000000), 0); // Groups label
+
+            // Update progress bar and labels colors based on current progress
+            lv_obj_t* progress_bar = lv_obj_get_child(blocks[i], 0);
+            lv_obj_t* start_time_label = lv_obj_get_child(blocks[i], 1);
+            lv_obj_t* end_time_label = lv_obj_get_child(blocks[i], 2);
+            int progress = lv_bar_get_value(progress_bar);
+            if (is_dark_theme)
+            {
+                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
+                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
+                if (progress == 100)
+                {
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
+                }
+                else
+                {
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+                }
+            }
+            else
+            {
+                if (progress == 100)
+                {
+                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
+                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
+                }
+                else
+                {
+                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
+                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
+                }
+            }
         }
     }
 
@@ -301,8 +337,8 @@ void update_schedule_display(struct tm* display_date)
     struct tm* current_time = localtime(&now);
 
     bool is_today = (display_date->tm_year == current_time->tm_year &&
-        display_date->tm_mon == current_time->tm_mon &&
-        display_date->tm_mday == current_time->tm_mday);
+                     display_date->tm_mon == current_time->tm_mon &&
+                     display_date->tm_mday == current_time->tm_mday);
 
     // Get total number of lessons
     int lesson_count = get_lesson_count_for_date(display_date);
@@ -340,14 +376,14 @@ void update_schedule_display(struct tm* display_date)
     if (display_date->tm_year < current_time->tm_year ||
         (display_date->tm_year == current_time->tm_year && display_date->tm_mon < current_time->tm_mon) ||
         (display_date->tm_year == current_time->tm_year && display_date->tm_mon == current_time->tm_mon &&
-         display_date->tm_mday < current_time->tm_mday))
+            display_date->tm_mday < current_time->tm_mday))
     {
         is_past_date = 1;
     }
     else if (display_date->tm_year > current_time->tm_year ||
         (display_date->tm_year == current_time->tm_year && display_date->tm_mon > current_time->tm_mon) ||
         (display_date->tm_year == current_time->tm_year && display_date->tm_mon == current_time->tm_mon &&
-         display_date->tm_mday > current_time->tm_mday))
+            display_date->tm_mday > current_time->tm_mday))
     {
         is_future_date = 1;
     }
@@ -372,40 +408,12 @@ void update_schedule_display(struct tm* display_date)
         lv_obj_set_flex_align(block, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
         blocks[i] = block;
 
-        // Progress bar with striped pattern
-        //LV_IMAGE_DECLARE(img_skew_strip);
-        //static lv_style_t style_indic;
-        //lv_style_init(&style_indic);
-        //lv_style_set_bg_image_src(&style_indic, &img_skew_strip);
-        //lv_style_set_bg_image_tiled(&style_indic, true);
-        //lv_style_set_bg_image_opa(&style_indic, LV_OPA_30);
-
-        //static lv_style_t style_main;
-        //lv_style_init(&style_main);
-        //lv_style_set_bg_image_src(&style_main, &img_skew_strip);
-        //lv_style_set_bg_image_tiled(&style_main, true);
-        //lv_style_set_bg_image_opa(&style_main, LV_OPA_50);
-
-        //lv_obj_t* progress_bar = lv_bar_create(block);
-        //lv_obj_add_style(progress_bar, &style_indic, LV_PART_INDICATOR);
-        //lv_obj_add_style(progress_bar, &style_main, LV_PART_MAIN);
-        //lv_obj_set_size(progress_bar, 600, 30);
-        //lv_bar_set_range(progress_bar, 0, 100);
-        //lv_obj_set_style_radius(progress_bar, 0, LV_PART_MAIN);
-        //lv_obj_set_style_radius(progress_bar, 0, LV_PART_INDICATOR);
-        //lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x90EE90), LV_PART_MAIN); // Fallback green
-        //lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x228B22), LV_PART_INDICATOR); // Fallback green
-        ////lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xCCCCCC), 0);
-        //progress_bars[i] = progress_bar;
-
         // Progress bar
         lv_obj_t* progress_bar = lv_bar_create(block);
         lv_obj_set_size(progress_bar, lv_pct(100), 30);
         lv_bar_set_range(progress_bar, 0, 100);
         lv_obj_set_style_radius(progress_bar, 0, LV_PART_MAIN);
         lv_obj_set_style_radius(progress_bar, 0, LV_PART_INDICATOR);
-        lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x90EE90), LV_PART_MAIN);
-        lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x228B22), LV_PART_INDICATOR);
 
         // Calculate progress
         int progress = 0;
@@ -439,7 +447,6 @@ void update_schedule_display(struct tm* display_date)
         snprintf(buffer, sizeof(buffer), "%02d:%02d", lesson.start_hour, lesson.start_minute);
         lv_label_set_text(start_time_label, buffer);
         lv_obj_set_style_text_font(start_time_label, &lv_font_my_montserrat_20, 0);
-        lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
         lv_obj_set_style_text_align(start_time_label, LV_TEXT_ALIGN_LEFT, 0);
         lv_obj_add_flag(start_time_label, LV_OBJ_FLAG_FLOATING);
         lv_obj_align_to(start_time_label, progress_bar, LV_ALIGN_LEFT_MID, 5, -1);
@@ -449,10 +456,41 @@ void update_schedule_display(struct tm* display_date)
         snprintf(buffer, sizeof(buffer), "%02d:%02d", lesson.end_hour, lesson.end_minute);
         lv_label_set_text(end_time_label, buffer);
         lv_obj_set_style_text_font(end_time_label, &lv_font_my_montserrat_20, 0);
-        lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
         lv_obj_set_style_text_align(end_time_label, LV_TEXT_ALIGN_RIGHT, 0);
         lv_obj_add_flag(end_time_label, LV_OBJ_FLAG_FLOATING);
         lv_obj_align_to(end_time_label, progress_bar, LV_ALIGN_RIGHT_MID, -5, -1);
+
+        // Set colors for progress bar and labels
+        if (is_dark_theme)
+        {
+            lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
+            lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
+            if (progress == 100)
+            {
+                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
+            }
+            else
+            {
+                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
+                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+            }
+        }
+        else
+        {
+            if (progress == 100)
+            {
+                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
+                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
+                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
+            }
+            else
+            {
+                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
+                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
+                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
+                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
+            }
+        }
 
         // Type label
         lv_obj_t* type_label = lv_label_create(block);
@@ -464,7 +502,7 @@ void update_schedule_display(struct tm* display_date)
         lv_obj_set_style_bg_opa(type_label, LV_OPA_COVER, 0);
         lv_obj_set_style_pad_all(type_label, 5, 0);
         lv_obj_set_style_bg_color(type_label, lv_color_hex(lesson.color), 0);
-        
+
         // Subject label (WRAP)
         lv_obj_t* subject_label = lv_label_create(block);
         lv_label_set_text(subject_label, lesson.subject);
@@ -533,8 +571,8 @@ void update_progress_bar(void)
 
     // Check if displayed date is today
     int is_today = (current_display_date.tm_year == current_time->tm_year &&
-                    current_display_date.tm_mon == current_time->tm_mon &&
-                    current_display_date.tm_mday == current_time->tm_mday);
+        current_display_date.tm_mon == current_time->tm_mon &&
+        current_display_date.tm_mday == current_time->tm_mday);
     if (!is_today) return;
 
     // Update progress bar of current lesson
@@ -546,6 +584,7 @@ void update_progress_bar(void)
             int start_minutes = lesson.start_hour * 60 + lesson.start_minute;
             int end_minutes = lesson.end_hour * 60 + lesson.end_minute;
             int progress = 0;
+
             if (current_minutes > end_minutes)
             {
                 progress = 100;
@@ -554,7 +593,44 @@ void update_progress_bar(void)
             {
                 progress = ((current_minutes - start_minutes) * 100) / (end_minutes - start_minutes);
             }
-            lv_bar_set_value(lv_obj_get_child(blocks[i], 0), progress, LV_ANIM_ON);
+
+            lv_obj_t* progress_bar = lv_obj_get_child(blocks[i], 0);
+            lv_bar_set_value(progress_bar, progress, LV_ANIM_ON);
+
+            // Update colors based on new progress
+            lv_obj_t* start_time_label = lv_obj_get_child(blocks[i], 1);
+            lv_obj_t* end_time_label = lv_obj_get_child(blocks[i], 2);
+
+            if (is_dark_theme)
+            {
+                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
+                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
+                if (progress == 100)
+                {
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
+                }
+                else
+                {
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+                }
+            }
+            else
+            {
+                if (progress == 100)
+                {
+                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
+                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
+                }
+                else
+                {
+                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
+                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
+                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
+                }
+            }
         }
     }
 }
@@ -576,7 +652,7 @@ void init_schedule_ui(void)
     lv_obj_align_to(calendar_image, theme_toggle_button, LV_ALIGN_OUT_LEFT_MID, -10, 0);
     lv_obj_add_flag(calendar_image, LV_OBJ_FLAG_CLICKABLE);
     //lv_obj_add_event_cb(calendar_image, calendar_container_cb, LV_EVENT_CLICKED, NULL);
-    
+
     // Create clickable container over time, date, and calendar icon
     clickable_container = lv_obj_create(lv_screen_active());
     lv_obj_set_size(clickable_container, 435, 48);
