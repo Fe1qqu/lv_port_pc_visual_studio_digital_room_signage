@@ -4,63 +4,87 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* read_room_id_from_config(const char* filename)
+Config read_config(const char* filename)
 {
-    FILE* file = fopen(filename, "rb");
+    Config config = { .roomId = NULL, .isDarkTheme = false, .inactiveDurationMs = 60000 }; // Default values
+
+    // Read the file
+    FILE* file = fopen(filename, "r");
     if (!file)
     {
         fprintf(stderr, "Failed to open config file: %s\n", filename);
-        return NULL;
+        return config;
     }
 
+    // Get file size
     fseek(file, 0, SEEK_END);
-    long length = ftell(file);
+    long file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    if (length <= 0)
-    {
-        fprintf(stderr, "Config file is empty or error reading length\n");
-        fclose(file);
-        return NULL;
-    }
-
-    char* buffer = (char*)malloc((size_t)length + 1);
+    // Read file content
+    char* buffer = (char*)malloc(file_size + 1);
     if (!buffer)
     {
-        fprintf(stderr, "Failed to allocate memory for config buffer\n");
+        fprintf(stderr, "Memory allocation failed\n");
         fclose(file);
-        return NULL;
+        return config;
     }
 
-    size_t read_bytes = fread(buffer, 1, (size_t)length, file);
+    fread(buffer, 1, file_size, file);
+    buffer[file_size] = '\0';
     fclose(file);
 
-    if (read_bytes != (size_t)length)
-    {
-        fprintf(stderr, "Failed to read config file contents\n");
-        free(buffer);
-        return NULL;
-    }
-    buffer[length] = '\0';
-
+    // Parse JSON
     cJSON* json = cJSON_Parse(buffer);
     free(buffer);
-
     if (!json)
     {
         fprintf(stderr, "Failed to parse JSON: %s\n", cJSON_GetErrorPtr());
-        return NULL;
+        return config;
     }
 
-    cJSON* room_id = cJSON_GetObjectItem(json, "roomId");
-    if (!cJSON_IsString(room_id))
+    // Read roomId
+    cJSON* room_id_item = cJSON_GetObjectItem(json, "roomId");
+    if (cJSON_IsString(room_id_item) && room_id_item->valuestring != NULL)
     {
-        fprintf(stderr, "roomId is not a string\n");
-        cJSON_Delete(json);
-        return NULL;
+        config.roomId = strdup(room_id_item->valuestring);
+        if (!config.roomId)
+        {
+            fprintf(stderr, "Failed to allocate memory for roomId\n");
+        }
+    }
+    else
+    {
+        fprintf(stderr, "roomId not found or not a string in config\n");
     }
 
-    char* result = strdup(room_id->valuestring);
+    // Read isDarkTheme
+    cJSON* theme_item = cJSON_GetObjectItem(json, "isDarkTheme");
+    if (cJSON_IsBool(theme_item))
+    {
+        config.isDarkTheme = cJSON_IsTrue(theme_item);
+    }
+    else
+    {
+        fprintf(stderr, "isDarkTheme not found or not a boolean in config\n");
+    }
+
+    // Read inactiveDurationMs
+    cJSON* inactive_duration_item = cJSON_GetObjectItem(json, "inactiveDurationMs");
+    if (cJSON_IsNumber(inactive_duration_item))
+    {
+        config.inactiveDurationMs = (uint32_t)inactive_duration_item->valuedouble;
+        if (config.inactiveDurationMs == 0)
+        {
+            fprintf(stderr, "inactiveDurationMs is invalid, using default: 60000\n");
+            config.inactiveDurationMs = 60000;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "inactiveDurationMs not found or not a number in config\n");
+    }
+
     cJSON_Delete(json);
-    return result;
+    return config;
 }

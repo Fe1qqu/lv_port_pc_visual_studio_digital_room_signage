@@ -1,3 +1,5 @@
 ﻿{
-  "roomId": "acc9792a-fd7e-876e-9c28-19050f194fa8"
+  "roomId": "acc9792a-fd7e-876e-9c28-19050f194fa8",
+  "isDarkTheme": true,
+  "inactiveDurationMs": 60000
 }

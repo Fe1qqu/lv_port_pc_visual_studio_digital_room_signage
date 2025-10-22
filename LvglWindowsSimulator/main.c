@@ -26,14 +26,23 @@ int main()
 {
     lv_init();
 
-    char* room_id = read_room_id_from_config("config.json");
-    if (!room_id)
+    // Read configuration from config.json
+    Config config = read_config("config.json");
+
+    // Check if roomId was successfully read
+    if (!config.roomId)
     {
         fprintf(stderr, "Failed to read roomId from config\n");
         return -1;
     }
-    set_room_id(room_id);
-    free(room_id);
+
+    // Set configuration values
+    set_room_id(config.roomId);
+    set_dark_theme(config.isDarkTheme);
+    set_inactive_duration(config.inactiveDurationMs);
+
+    // Free allocated memory for roomId
+    free(config.roomId);
 
     /*
      * Optional workaround for users who wants UTF-8 console output.

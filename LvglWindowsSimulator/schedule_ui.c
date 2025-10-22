@@ -1,9 +1,9 @@
 ﻿#include "schedule_ui.h"
 #include "schedule_data.h"
 #include "locale.h"
+#include "config.h"
 #include <lvgl/lvgl.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <time.h>
 #include <string.h>
 
@@ -13,7 +13,6 @@ LV_IMG_DECLARE(theme_icon_dark)
 
 #define MAX_NUMBER_OF_LESSONS 10
 #define POPUP_DURATION_MS 3000
-#define INACTIVE_DURATION_MS 60000
 
 static lv_obj_t* list_container;
 static lv_obj_t* blocks[MAX_NUMBER_OF_LESSONS]; // Store lessons blocks
@@ -37,15 +36,26 @@ static lv_timer_t* popup_timer;
 
 static lv_obj_t* theme_toggle_button;
 static bool is_dark_theme = false;
+static uint32_t inactive_duration_ms = 60000;
+
+void set_dark_theme(bool is_dark)
+{
+    is_dark_theme = is_dark;
+}
+
+void set_inactive_duration(uint32_t duration_ms)
+{
+    inactive_duration_ms = duration_ms;
+}
 
 static void inactivity_check_cb(lv_timer_t* timer)
 {
     (void)timer;
-    lv_display_t* disp = lv_display_get_default();
-    if (!disp) return;
+    lv_display_t* display = lv_display_get_default();
+    if (!display) return;
 
-    uint32_t inactive_time_ms = lv_display_get_inactive_time(disp);
-    if (inactive_time_ms >= INACTIVE_DURATION_MS)
+    uint32_t inactive_time_ms = lv_display_get_inactive_time(display);
+    if (inactive_time_ms >= inactive_duration_ms)
     {
         // Get current time
         time_t now = time(NULL);
@@ -101,6 +111,40 @@ static void show_popup(const char* message)
     popup_timer = lv_timer_create(popup_timer_cb, POPUP_DURATION_MS, NULL);
 }
 
+static void style_progress_bar_and_labels(lv_obj_t* progress_bar, lv_obj_t* start_time_label, lv_obj_t* end_time_label, int progress)
+{
+    if (is_dark_theme)
+    {
+        lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
+        if (progress == 100)
+        {
+            lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
+            lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+        }
+    }
+    else
+    {
+        if (progress == 100)
+        {
+            lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
+            lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
+            lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
+        }
+        else
+        {
+            lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
+            lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
+            lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
+            lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
+        }
+    }
+}
+
 static void update_calendar_arrow_state(lv_obj_t* calendar)
 {
     const lv_calendar_date_t* showed_date = lv_calendar_get_showed_date(calendar);
@@ -128,13 +172,13 @@ static void update_calendar_arrow_state(lv_obj_t* calendar)
     if (mktime(&prev_month) < mktime(&start_academic_date))
     {
         //printf("Left arrow disabled\n");
-        lv_obj_set_style_text_color(left_arrow, lv_color_hex(0xBBBBBB), 0); // Arrow color
+        lv_obj_set_style_text_color(left_arrow, is_dark_theme ? lv_color_hex(0x000000) : lv_color_hex(0xBBBBBB), 0); // Disabled arrow color
         lv_obj_add_state(left_arrow, LV_STATE_DISABLED);
     }
     else
     {
         //printf("Left arrow enabled\n");
-        lv_obj_set_style_text_color(left_arrow, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x2C72A5), 0); // Arrow color
+        lv_obj_set_style_text_color(left_arrow, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x2C72A5), 0); // Enabled arrow color
         lv_obj_remove_state(left_arrow, LV_STATE_DISABLED);
     }
 
@@ -142,13 +186,13 @@ static void update_calendar_arrow_state(lv_obj_t* calendar)
     if (mktime(&next_month) > mktime(&end_academic_date))
     {
         //printf("Right arrow disabled\n");
-        lv_obj_set_style_text_color(right_arrow, lv_color_hex(0xBBBBBB), 0); // Arrow color
+        lv_obj_set_style_text_color(right_arrow, is_dark_theme ? lv_color_hex(0x000000) : lv_color_hex(0xBBBBBB), 0); // Disabled arrow color
         lv_obj_add_state(right_arrow, LV_STATE_DISABLED);
     }
     else
     {
         //printf("Right arrow enabled\n");
-        lv_obj_set_style_text_color(right_arrow, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x2C72A5), 0); // Arrow color
+        lv_obj_set_style_text_color(right_arrow, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x2C72A5), 0); // Enabled arrow color
         lv_obj_remove_state(right_arrow, LV_STATE_DISABLED);
     }
 }
@@ -244,36 +288,7 @@ static void toggle_theme_cb(lv_event_t* event)
             lv_obj_t* start_time_label = lv_obj_get_child(blocks[i], 1);
             lv_obj_t* end_time_label = lv_obj_get_child(blocks[i], 2);
             int progress = lv_bar_get_value(progress_bar);
-            if (is_dark_theme)
-            {
-                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
-                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
-                if (progress == 100)
-                {
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
-                }
-                else
-                {
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-                }
-            }
-            else
-            {
-                if (progress == 100)
-                {
-                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
-                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
-                }
-                else
-                {
-                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
-                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
-                }
-            }
+            style_progress_bar_and_labels(progress_bar, start_time_label, end_time_label, progress);
         }
     }
 
@@ -461,36 +476,7 @@ void update_schedule_display(struct tm* display_date)
         lv_obj_align_to(end_time_label, progress_bar, LV_ALIGN_RIGHT_MID, -5, -1);
 
         // Set colors for progress bar and labels
-        if (is_dark_theme)
-        {
-            lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
-            lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
-            if (progress == 100)
-            {
-                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
-            }
-            else
-            {
-                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
-                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-            }
-        }
-        else
-        {
-            if (progress == 100)
-            {
-                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
-                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
-                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
-            }
-            else
-            {
-                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
-                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
-                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
-                lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
-            }
-        }
+        style_progress_bar_and_labels(progress_bar, start_time_label, end_time_label, progress);
 
         // Type label
         lv_obj_t* type_label = lv_label_create(block);
@@ -600,48 +586,20 @@ void update_progress_bar(void)
             // Update colors based on new progress
             lv_obj_t* start_time_label = lv_obj_get_child(blocks[i], 1);
             lv_obj_t* end_time_label = lv_obj_get_child(blocks[i], 2);
-
-            if (is_dark_theme)
-            {
-                lv_obj_set_style_text_color(start_time_label, lv_color_hex(0xFFFFFF), 0);
-                lv_obj_set_style_text_color(end_time_label, lv_color_hex(0xFFFFFF), 0);
-                if (progress == 100)
-                {
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x276f2f), LV_PART_INDICATOR);
-                }
-                else
-                {
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x477285), LV_PART_INDICATOR);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-                }
-            }
-            else
-            {
-                if (progress == 100)
-                {
-                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x276f2f), 0);
-                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x276f2f), 0);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x9ffea5), LV_PART_INDICATOR);
-                }
-                else
-                {
-                    lv_obj_set_style_text_color(start_time_label, lv_color_hex(0x285886), 0);
-                    lv_obj_set_style_text_color(end_time_label, lv_color_hex(0x285886), 0);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0xaddff6), LV_PART_INDICATOR);
-                    lv_obj_set_style_bg_color(progress_bar, lv_color_hex(0x858585), LV_PART_MAIN);
-                }
-            }
+            style_progress_bar_and_labels(progress_bar, start_time_label, end_time_label, progress);
         }
     }
 }
 
 void init_schedule_ui(void)
 {
-    lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x2C72A5), 0);
+    lv_obj_set_style_bg_color(lv_screen_active(), is_dark_theme ? lv_color_hex(0x303336) : lv_color_hex(0x2C72A5), 0);
 
     // Create theme toggle button
     theme_toggle_button = lv_imagebutton_create(lv_screen_active());
-    lv_imagebutton_set_src(theme_toggle_button, LV_IMAGEBUTTON_STATE_RELEASED, &theme_icon_light, &theme_icon_light, NULL);
+    lv_imagebutton_set_src(theme_toggle_button, LV_IMAGEBUTTON_STATE_RELEASED,
+        is_dark_theme ? &theme_icon_dark : &theme_icon_light,
+        is_dark_theme ? &theme_icon_dark : &theme_icon_light, NULL);
     lv_obj_set_size(theme_toggle_button, 32, 32);
     lv_obj_align(theme_toggle_button, LV_ALIGN_TOP_RIGHT, -10, 8);
     lv_obj_add_event_cb(theme_toggle_button, toggle_theme_cb, LV_EVENT_CLICKED, NULL);
@@ -671,7 +629,7 @@ void init_schedule_ui(void)
     lv_obj_align(list_container, LV_ALIGN_BOTTOM_MID, 0, 0);
     lv_obj_set_scroll_dir(list_container, LV_DIR_VER); // Vertical scrolling only
     lv_obj_set_scrollbar_mode(list_container, LV_SCROLLBAR_MODE_ON);
-    lv_obj_set_style_bg_color(list_container, lv_color_hex(0xFFFFFF), 0); // White background
+    lv_obj_set_style_bg_color(list_container, is_dark_theme ? lv_color_hex(0x101012) : lv_color_hex(0xFFFFFF), 0);
     lv_obj_set_style_border_width(list_container, 0, 0);
     lv_obj_set_style_radius(list_container, 0, 0);
     lv_obj_add_flag(list_container, LV_OBJ_FLAG_SCROLLABLE);
@@ -684,7 +642,7 @@ void init_schedule_ui(void)
     date_label = lv_label_create(list_container);
     lv_label_set_text(date_label, "На сегодня занятий нет");
     lv_obj_set_style_text_font(date_label, &lv_font_my_montserrat_20, 0);
-    lv_obj_set_style_text_color(date_label, lv_color_hex(0x2C72A5), 0);
+    lv_obj_set_style_text_color(date_label, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x2C72A5), 0);
     lv_obj_set_style_pad_all(date_label, 5, 0);
 
     // Сalendar container
@@ -707,8 +665,8 @@ void init_schedule_ui(void)
     calendar = lv_calendar_create(calendar_container);
     lv_obj_set_size(calendar, 300, 350);
     lv_obj_center(calendar);
-    lv_obj_set_style_bg_color(calendar, lv_color_hex(0xFFFFFF), 0);
-    lv_obj_set_style_text_color(calendar, lv_color_hex(0x000000), 0);
+    lv_obj_set_style_bg_color(calendar, is_dark_theme ? lv_color_hex(0x303336) : lv_color_hex(0xFFFFFF), 0);
+    lv_obj_set_style_text_color(calendar, is_dark_theme ? lv_color_hex(0xFFFFFF) : lv_color_hex(0x000000), 0);
     lv_obj_set_style_border_width(calendar, 0, 0);
 
     // Change calendar day buttons style
@@ -731,7 +689,6 @@ void init_schedule_ui(void)
     lv_obj_set_style_bg_opa(left_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_PRESSED));
     lv_obj_set_style_border_width(left_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
     lv_obj_set_style_shadow_width(left_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-    lv_obj_set_style_text_color(left_arrow, lv_color_hex(0x000000), (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT)); // Arrow color
 
     // Style for header (year and month) (child 1)
     lv_obj_set_style_text_font(lv_obj_get_child(calendar_header, 1), &lv_font_my_montserrat_14, 0);
@@ -742,7 +699,6 @@ void init_schedule_ui(void)
     lv_obj_set_style_bg_opa(right_arrow, LV_OPA_TRANSP, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_PRESSED));
     lv_obj_set_style_border_width(right_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
     lv_obj_set_style_shadow_width(right_arrow, 0, (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT));
-    lv_obj_set_style_text_color(right_arrow, lv_color_hex(0x000000), (lv_style_selector_t)(LV_PART_MAIN | LV_STATE_DEFAULT)); // Arrow color
 
     lv_obj_add_event_cb(calendar, calendar_event_cb, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(lv_obj_get_child(calendar_header, 0), prev_event_cb, LV_EVENT_CLICKED, calendar);
@@ -751,7 +707,7 @@ void init_schedule_ui(void)
     // Сalendar сlose button
     calendar_close_button = lv_button_create(calendar);
     lv_obj_set_size(calendar_close_button, lv_pct(100), 40);
-    lv_obj_set_style_bg_color(calendar_close_button, lv_color_hex(0x407AB2), 0);
+    lv_obj_set_style_bg_color(calendar_close_button, is_dark_theme ? lv_color_hex(0x272727) : lv_color_hex(0x407AB2), 0);
     lv_obj_set_style_margin_all(calendar_close_button, 8, 0);
     lv_obj_t* close_label = lv_label_create(calendar_close_button);
     lv_label_set_text(close_label, "Закрыть");

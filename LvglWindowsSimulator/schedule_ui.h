@@ -1,6 +1,9 @@
 ﻿#ifndef SCHEDULE_UI_H
 #define SCHEDULE_UI_H
 
+#include <stdbool.h>
+#include <stdint.h>
+
 struct tm;
 
 /**
@@ -23,5 +26,19 @@ void update_schedule_display(struct tm* date);
  * @note Should be called periodically (e.g., every minute) to reflect real-time progress.
  */
 void update_progress_bar(void);
+
+/**
+ * Set the ui theme state
+ * @param is_dark Boolean value:
+ *        - `true` — enable dark theme
+ *        - `false` — disable dark theme
+ */
+void set_dark_theme(bool is_dark);
+
+/**
+ * Sets the inactive duration timeout.
+ * @param duration_ms Duration of inactivity in milliseconds.
+ */
+void set_inactive_duration(uint32_t duration_ms);
 
 #endif
